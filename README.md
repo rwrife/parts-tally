@@ -2,6 +2,8 @@
 
 **Parts Tally is a USB-powered ESP32-C3 smart bin scale that counts small workshop parts by calibrated unit weight and serves a private local inventory app—no cloud account required.**
 
+![Parts Tally Concept Design](docs/images/parts_tally_device.jpg)
+
 > **Status:** concept and documentation scaffold. No schematic, PCB, firmware, app build, or physical test evidence exists yet. The issue backlog will create and verify those artifacts incrementally.
 
 ## Motivation
