@@ -4,8 +4,6 @@
 
 ![Parts Tally Concept Design](docs/images/parts_tally_device.jpg)
 
-> **Status:** concept and documentation scaffold. No schematic, PCB, firmware, app build, or physical test evidence exists yet. The issue backlog will create and verify those artifacts incrementally.
-
 ## Motivation
 
 Counting screws, nuts, washers, crimp terminals, and other small repeated parts by hand is slow. Visual estimates are unreliable, while commercial inventory systems are often expensive or cloud-dependent. Parts Tally turns a removable parts bin into a local smart scale: select a saved part profile, tare the empty bin, and see an estimated count plus a low-stock state.
