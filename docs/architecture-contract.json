@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "architecture_version": "1.0",
+  "baseline_date": "2026-08-19",
+  "status": "design-contract",
+  "safety_scope": {
+    "power": "USB 5 V SELV only",
+    "legal_for_trade": false,
+    "safety_certified": false,
+    "forbidden_uses": [
+      "mains",
+      "medical",
+      "life-safety",
+      "hazardous-process",
+      "weapon"
+    ]
+  },
+  "documents": {
+    "requirements": "hardware/requirements.md",
+    "architecture": "docs/architecture.md",
+    "interfaces": "hardware/interfaces.md",
+    "protocol": "docs/protocol.md",
+    "verification_plan": "docs/verification-plan.md",
+    "risk_register": "docs/risk-register.md"
+  },
+  "subsystems": [
+    "mechanical",
+    "load-cell-and-adc",
+    "firmware-drivers",
+    "measurement-domain",
+    "device-services",
+    "companion-pwa"
+  ],
+  "measurement": {
+    "minimum_calibration_count": 10,
+    "minimum_stability_seconds": 2,
+    "minimum_stability_samples": 20,
+    "minimum_unit_mass_to_noise_band_ratio": 20,
+    "rounding": "nearest-ties-away-from-zero",
+    "required_no_count_states": [
+      "uncalibrated",
+      "unstable",
+      "stale",
+      "disconnected",
+      "saturated",
+      "overload_indicated",
+      "below_tare",
+      "calibration_invalid",
+      "uncertainty_excessive"
+    ]
+  },
+  "requirement_prefixes": ["E", "M", "K", "C", "V", "R"],
+  "verification_tests": [
+    "DOC-01",
+    "NOISE-01",
+    "REP-01",
+    "HYS-01",
+    "WARM-01",
+    "CREEP-01",
+    "OFFCENTER-01",
+    "CABLE-01",
+    "DISC-01",
+    "SAT-01",
+    "OVR-01",
+    "WIFI-01",
+    "COUNT-01"
+  ],
+  "risk_ids": [
+    "RISK-ANALOG-01",
+    "RISK-RF-01",
+    "RISK-MECH-01",
+    "RISK-CAL-01",
+    "RISK-CRED-01",
+    "RISK-SOURCE-01",
+    "RISK-COUNT-01"
+  ],
+  "dependency_gates": {
+    "component_selection": 2,
+    "schematic_and_bom": 3,
+    "firmware": 4,
+    "app": 5,
+    "pcb_and_mechanics": 6,
+    "bringup_and_release": 7
+  },
+  "evidence_status": {
+    "documentation_static": "implemented",
+    "datasheet_selection": "pending",
+    "simulation": "not-performed",
+    "software": "not-implemented",
+    "schematic_layout": "not-implemented",
+    "bench": "not-performed",
+    "field": "not-performed"
+  }
+}

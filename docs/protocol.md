@@ -1,6 +1,6 @@
 # Parts Tally local protocol (draft v0)
 
-This is an initial contract for issue-driven refinement. It does not describe an implemented endpoint.
+This is an initial contract for issue-driven refinement. It does not describe an implemented endpoint. Measurement semantics and no-count behavior are governed by [`architecture.md`](architecture.md).
 
 ## Boundary and transport
 
@@ -60,6 +60,7 @@ Returns version, connectivity, sensor/fault state, current profile, and measurem
   "deviceId": "pt-...",
   "firmwareVersion": "0.1.0",
   "measurement": {
+    "state": "stable",
     "raw": 123456,
     "netGrams": 84.2,
     "stable": true,
@@ -71,6 +72,8 @@ Returns version, connectivity, sensor/fault state, current profile, and measurem
   "faults": []
 }
 ```
+
+`measurement.state` is one of `stable`, `unstable`, `stale`, `disconnected`, `saturated`, `overload_indicated`, `below_tare`, `uncalibrated`, `calibration_invalid`, or `uncertainty_excessive`. In every no-count state, `estimatedCount` and `uncertaintyPieces` are `null`; clients must not retain a previous count as current. Additive diagnostic fields may explain the rejected reading. A `stable` state is still not legal-for-trade or certified measurement evidence.
 
 ### `GET /api/v1/profiles`
 

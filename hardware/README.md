@@ -12,6 +12,8 @@ The prototype targets **Seeed Studio XIAO ESP32C3**, based on Espressif ESP32-C3
 
 ## Interfaces
 
+The planned logical wiring map and carrier-board ownership boundary are versioned in [`interfaces.md`](interfaces.md). Exact module pins, voltage levels, wire colors, and connector orientation remain `TBD-VERIFY` until issue #2 checks manufacturer documents.
+
 - 4-wire load cell bridge to ADC: excitation +/-, signal +/-
 - HX711-class two-wire digital interface to MCU: clock and data
 - One debounced physical tare/calibrate button
@@ -65,4 +67,4 @@ Final Manufacturer, MPN, supplier, and BOM-note data lives in KiCad symbol prope
 
 ## Current evidence
 
-Documentation only. No editable KiCad project, ERC/DRC output, measurements, or fabricated hardware exists yet.
+The reviewed requirements, architecture, measurement model, planned interface map, unexecuted verification plan, risk register, and automated contract checks exist. No exact component selection/datasheet verification, editable KiCad project, ERC/DRC output, firmware/app implementation, simulation, measurements, fabricated hardware, or field evidence exists yet.
