@@ -94,12 +94,23 @@ Those files do not exist yet and will be created only when the schematic issue i
 
 ## Current status and milestones
 
-1. Requirements, measurement model, and architecture risk review
+1. Requirements, measurement model, and architecture risk review — baselined in the editable documents below; this is documentation/static evidence only
 2. Datasheet-backed module prototype and calibration fixture
 3. Editable KiCad schematic, ERC, and schematic-backed BOM
 4. Firmware and local protocol with host-side tests
 5. Accessible local PWA and import/export
 6. Carrier PCB, DRC, assembly/bring-up, and fabrication release
+
+Baseline contracts:
+
+- [System architecture and count/uncertainty model](docs/architecture.md)
+- [Reviewed measurable requirements](hardware/requirements.md)
+- [Planned module wiring and carrier boundary](hardware/interfaces.md)
+- [Unexecuted prototype verification plan](docs/verification-plan.md)
+- [Risk register](docs/risk-register.md)
+- [Machine-readable architecture contract](docs/architecture-contract.json)
+
+Run `python3 scripts/validate_contract.py` and `python3 -m unittest discover -s tests -v` to validate document, safety, dependency, risk, and evidence-state consistency.
 
 See [PLAN.md](PLAN.md), [hardware/README.md](hardware/README.md), and the GitHub issue backlog.
 

@@ -9,6 +9,8 @@ Build a reproducible, local-first parts-counting platform in two increments:
 
 ## Architecture
 
+The versioned baseline is [docs/architecture.md](docs/architecture.md), with measurable requirements in [hardware/requirements.md](hardware/requirements.md), logical prototype/carrier interfaces in [hardware/interfaces.md](hardware/interfaces.md), planned evidence in [docs/verification-plan.md](docs/verification-plan.md), and residual risks in [docs/risk-register.md](docs/risk-register.md). `docs/architecture-contract.json` is checked in CI to prevent drift in safety scope, dependency gates, no-count states, test IDs, and evidence labels.
+
 ### Measurement path
 
 `load cell bridge -> 24-bit ADC -> ESP32-C3 sampler -> outlier/filter/stability pipeline -> calibrated mass -> count estimate + uncertainty`
@@ -108,6 +110,8 @@ Field use is separate from bench validation and will not be claimed until perfor
 - Release archive: licenses and a manifest tying firmware, app, and board revisions together
 
 ## Risks and mitigations
+
+This summary is navigational. The versioned [risk register](docs/risk-register.md) is authoritative for risk IDs, owners, verification stages, and residual status.
 
 | Risk | Mitigation |
 |---|---|
