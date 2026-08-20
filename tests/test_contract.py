@@ -32,7 +32,7 @@ class ArchitectureContractTests(unittest.TestCase):
             with self.subTest(stage=stage):
                 altered = json.loads(json.dumps(self.contract))
                 altered["evidence_status"][stage] = "passed"
-                with self.assertRaisesRegex(validator.ContractError, "canonical pre-implementation"):
+                with self.assertRaisesRegex(validator.ContractError, "canonical staged evidence"):
                     validator.validate_contract(altered)
 
     def test_required_verification_ids_fail_closed(self) -> None:
@@ -51,6 +51,12 @@ class ArchitectureContractTests(unittest.TestCase):
         altered = json.loads(json.dumps(self.contract))
         del altered["documents"]["risk_register"]
         with self.assertRaisesRegex(validator.ContractError, "document map is incomplete"):
+            validator.validate_contract(altered)
+
+    def test_selected_hardware_chain_is_protected(self) -> None:
+        altered = json.loads(json.dumps(self.contract))
+        altered["selected_hardware"]["adc_ic_mpn"] = "HX711"
+        with self.assertRaisesRegex(validator.ContractError, "reviewed issue #2 chain"):
             validator.validate_contract(altered)
 
     def test_dependency_gate_order_is_protected(self) -> None:

@@ -8,14 +8,14 @@ The first hardware increment uses proven modules so measurement and mechanical r
 
 ## Controller choice
 
-The prototype targets **Seeed Studio XIAO ESP32C3**, based on Espressif ESP32-C3. It provides Wi-Fi, BLE-capable hardware, native USB development support, a small footprint, and enough GPIO for the bridge ADC, button, status LED, and debug access. The exact orderable module/board SKU and revision must be captured from the manufacturer before purchase and in KiCad properties before schematic release.
+The selected prototype controller is **Seeed Studio XIAO ESP32-C3, SKU 113991054**. The selected ADC module is **SparkFun SEN-15242** using **Nuvoton NAU7802**; the selected carrier IC is **NAU7802SGI**. The selected load cell orderable SKU is **SparkFun SEN-14729**, containing the HT Sensor TAL220B 5 kg cell. See [`selection.md`](selection.md) and [`datasheets/manifest.json`](datasheets/manifest.json).
 
 ## Interfaces
 
-The planned logical wiring map and carrier-board ownership boundary are versioned in [`interfaces.md`](interfaces.md). Exact module pins, voltage levels, wire colors, and connector orientation remain `TBD-VERIFY` until issue #2 checks manufacturer documents.
+The exact planned logical wiring map and carrier-board ownership boundary are versioned in [`interfaces.md`](interfaces.md), with pre-power and capture steps in [`module-prototype.md`](module-prototype.md). Physical connector orientation and continuity remain pending until real units exist.
 
 - 4-wire load cell bridge to ADC: excitation +/-, signal +/-
-- HX711-class two-wire digital interface to MCU: clock and data
+- NAU7802 3.3 V I2C: XIAO D4/GPIO6 SDA and D5/GPIO7 SCL
 - One debounced physical tare/calibrate button
 - One addressable or discrete RGB status indicator with brightness limit
 - USB-C 5 V input through the controller module for prototype power/programming
@@ -26,7 +26,7 @@ The planned logical wiring map and carrier-board ownership boundary are versione
 
 - SELV 5 V USB input only for MVP
 - Use the controller module's regulated rail for logic, subject to measured noise/current validation
-- Bridge excitation/ADC supply must follow the selected ADC and load-cell datasheets
+- Initial module setting is 3.3 V DVDD/Qwiic and 3.0 V nominal AVDD/excitation; measure this boundary condition before schematic release
 - Add input protection, decoupling, analog filtering, and connector protection in the schematic as justified by datasheets
 - No battery or charger in revision A
 
@@ -67,4 +67,4 @@ Final Manufacturer, MPN, supplier, and BOM-note data lives in KiCad symbol prope
 
 ## Current evidence
 
-The reviewed requirements, architecture, measurement model, planned interface map, unexecuted verification plan, risk register, and automated contract checks exist. No exact component selection/datasheet verification, editable KiCad project, ERC/DRC output, firmware/app implementation, simulation, measurements, fabricated hardware, or field evidence exists yet.
+The exact module chain, manufacturer-document/source manifest, planned wiring, current price/availability snapshot, and synthetic capture/analyzer tests now exist. No editable KiCad project, ERC/DRC output, firmware/app implementation, electrical simulation, physical fixture/assembly, continuity result, measurement, fabrication, or field evidence exists yet.

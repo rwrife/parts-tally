@@ -26,12 +26,24 @@ REQUIRED_NO_COUNT_STATES = {
 }
 EXPECTED_EVIDENCE_STATUS = {
     "documentation_static": "implemented",
-    "datasheet_selection": "pending",
+    "datasheet_selection": "implemented",
     "simulation": "not-performed",
-    "software": "not-implemented",
+    "software": "capture-harness-tests-only",
     "schematic_layout": "not-implemented",
     "bench": "not-performed",
     "field": "not-performed",
+}
+EXPECTED_SELECTED_HARDWARE = {
+    "controller_sku": "113991054",
+    "adc_module_sku": "SEN-15242",
+    "adc_ic_mpn": "NAU7802SGI",
+    "load_cell_sku": "SEN-14729",
+    "load_cell_model": "TAL220B 5 kg",
+    "interface": "I2C",
+    "dvdd_v": 3.3,
+    "avdd_nominal_v": 3.0,
+    "pga": 128,
+    "baseline_sps": 10,
 }
 
 
@@ -89,11 +101,36 @@ def validate_contract(data: dict) -> list[str]:
     require(isinstance(docs, dict), "documents must be an object")
     required_doc_keys = {
         "requirements", "architecture", "interfaces", "protocol",
-        "verification_plan", "risk_register"
+        "verification_plan", "risk_register", "selection", "datasheet_manifest"
     }
     require(required_doc_keys <= set(docs), "document map is incomplete")
     text_by_key = {key: read_relative(value) for key, value in docs.items()}
     checks.append(f"{len(text_by_key)} required documents")
+
+    selected = data.get("selected_hardware")
+    require(selected == EXPECTED_SELECTED_HARDWARE,
+            "selected_hardware must equal the reviewed issue #2 chain")
+    selection_text = text_by_key["selection"]
+    for value in ("113991054", "SEN-15242", "NAU7802SGI", "SEN-14729", "3.0 V", "PGA 128", "10 SPS"):
+        require(value in selection_text, f"selection document omits {value}")
+    try:
+        manifest = json.loads(text_by_key["datasheet_manifest"])
+    except json.JSONDecodeError as exc:
+        raise ContractError(f"datasheet manifest is invalid JSON: {exc}") from exc
+    require(manifest.get("schema_version") == 1, "datasheet manifest schema_version must equal 1")
+    manifest_parts = {
+        item.get("mpn_or_sku")
+        for item in manifest.get("documents", [])
+        if isinstance(item, dict)
+    }
+    required_manifest_parts = {
+        "113991054", "NAU7802SGI", "SparkFun SEN-14729 / TAL220B 5 kg", "HX711"
+    }
+    require(required_manifest_parts <= manifest_parts,
+            "datasheet manifest does not cover the selected chain and comparison ADC")
+    require(all(item.get("sha256_observed") for item in manifest.get("documents", []) if isinstance(item, dict)),
+            "every datasheet manifest document needs an observed SHA-256")
+    checks.append("selected hardware and datasheet manifest")
 
     requirements = table_ids(text_by_key["requirements"], ID_RE)
     require(len(requirements) == len(set(requirements)), "duplicate requirement IDs found")
@@ -157,7 +194,7 @@ def validate_contract(data: dict) -> list[str]:
     evidence = data.get("evidence_status")
     require(isinstance(evidence, dict), "evidence_status must be an object")
     require(evidence == EXPECTED_EVIDENCE_STATUS,
-            "evidence_status must equal the canonical pre-implementation states")
+            "evidence_status must equal the canonical staged evidence states")
     checks.append("evidence separation")
 
     return checks

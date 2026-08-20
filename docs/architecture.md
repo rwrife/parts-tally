@@ -1,8 +1,8 @@
 # Parts Tally system architecture
 
-**Architecture version:** 1.0
-**Baseline date:** 2026-08-19
-**Status:** Reviewed design contract; implementation and physical verification pending
+**Architecture version:** 1.1
+**Baseline date:** 2026-08-20
+**Status:** Datasheet-backed module chain selected and synthetic capture tools tested; electrical implementation and physical verification pending
 
 This document defines the module-prototype boundary and the later carrier-board boundary. It is not evidence that either assembly exists. The companion machine-readable summary is [`architecture-contract.json`](architecture-contract.json).
 
@@ -47,7 +47,7 @@ USB 5 V SELV
 
 1. Input is a compliant 5 V USB SELV source only.
 2. The module prototype is powered through the selected controller board's supported USB input.
-3. ADC supply, bridge excitation, filtering, and logic levels remain selection gates for issue #2; no generic module pin name is treated as manufacturer truth.
+3. The selected module chain is XIAO ESP32-C3 113991054 plus SparkFun SEN-15242/NAU7802 and SEN-14729/TAL220B. It uses 3.3 V I2C logic and begins with 3.0 V nominal bridge excitation; the boundary-condition voltage and noise remain measurement gates.
 4. Normal current is a design target below 500 mA, not a measured claim. Peak and steady current must be measured on real hardware before release.
 5. Recovery remains available over the controller's documented USB/UART path without LAN access.
 6. The carrier revision adds protection, decoupling, named test points, connector protection, and ground/return strategy from manufacturer application guidance.
@@ -79,7 +79,7 @@ The pipeline processes timestamped samples in this order:
 3. Compute a rolling center, `P95 - P5` noise band, slope, outlier rate, and sample age.
 4. Reset the stability dwell timer after a step, health fault, excessive spread, excessive slope, or excessive outlier rate.
 
-Candidate ADC rate and thresholds are not frozen before issue #2 characterization. The implementation must use named, persisted, bounded parameters and record the active values in diagnostics.
+The initial ADC baseline is 10 SPS, channel 1, PGA 128; 80 SPS is a separate comparison condition. Stability/noise thresholds are not frozen without characterization. The implementation must use named, persisted, bounded parameters and record the active values in diagnostics.
 
 ### 4.3 Stability contract
 
@@ -212,8 +212,8 @@ The PCB, USB connector, ADC board, cable, and enclosure walls are outside the fo
 
 | Concern | Module prototype | Carrier revision |
 |---|---|---|
-| Controller | Exact manufacturer board/SKU selected in #2 | Same validated module or justified exact replacement |
-| ADC | Exact active breakout/IC selected in #2 | IC plus reference application components in KiCad |
+| Controller | Seeed XIAO ESP32-C3 SKU 113991054 | Same validated module or justified exact replacement |
+| ADC | SparkFun SEN-15242 / Nuvoton NAU7802 | NAU7802SGI plus Rev. 2.6 reference application components in KiCad |
 | Wiring | Short labeled harness per `hardware/interfaces.md` | Keyed connector and named nets/test points |
 | Power | Supported controller USB input | Reviewed USB/protection/regulation/decoupling |
 | RF | Physical clearance around module antenna | Enforced copper/component/mechanical keepout |
@@ -232,8 +232,8 @@ No later stage may be claimed from an earlier stage's evidence.
 
 ## 11. Open decisions delegated by dependency order
 
-- #2: exact controller SKU/revision, ADC approach, load cell, connector/button/LED candidates, sample rate, analog supply/filtering, and characterized stability thresholds.
-- #3: protection/regulation, exact pin mapping, footprints, debug/test points, and schematic-backed BOM.
+- #2 residual bench work: actual purchased revisions, excitation/noise/RF characterization, fixture evidence, and characterized stability thresholds. These remain explicitly unexecuted because no hardware is available.
+- #3: protection/regulation, exact button/status/carrier-connector selections, footprints, debug/test points, and schematic-backed BOM.
 - #4: filtering implementation, storage schema, authentication/session details, logging, recovery, and target build.
 - #5: accessible workflows, caching behavior, and offline/PWA platform limits.
 - #6: PCB stackup/layout/keepouts and mechanical dimensions/overload stops.
@@ -241,6 +241,6 @@ No later stage may be claimed from an earlier stage's evidence.
 
 ## 12. Current evidence
 
-Completed in this baseline: requirements review, architecture model, measurement contract, planned interface map, planned tests, risk register, and automated document/contract checks.
+Completed: requirements/architecture contracts; manufacturer-document selection of XIAO 113991054, SEN-15242/NAU7802SGI, and SEN-14729/TAL220B; exact planned module wiring; a source/hash manifest; and tested raw-capture/analysis software with synthetic fixtures.
 
-Not completed: component selection, datasheet verification, schematic, PCB, firmware, app, simulation, fabrication, assembly, bench measurements, or field testing.
+Not completed: KiCad schematic/PCB, final button/LED/carrier connector selection, firmware, app, electrical simulation, fabrication, assembly, continuity checks, bench measurements, or field testing. Datasheet review is not physical validation.
