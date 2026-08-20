@@ -34,7 +34,7 @@ Counting screws, nuts, washers, crimp terminals, and other small repeated parts 
 ## MVP
 
 - ESP32-C3 controller with USB power, Wi-Fi, and BLE-capable hardware
-- One 4-wire bar load cell and 24-bit bridge ADC (prototype candidate: HX711 breakout)
+- One TAL220B 5 kg 4-wire bar load cell and SparkFun SEN-15242/NAU7802 bridge ADC module
 - Physical tare/calibrate button and RGB status indication
 - Stable-weight detection, tare, multi-point known-count calibration, and count uncertainty
 - On-device local API plus responsive installable PWA
@@ -56,11 +56,11 @@ Counting screws, nuts, washers, crimp terminals, and other small repeated parts 
 ```text
 5 V USB-C supply
        |
-XIAO ESP32-C3 ---- status RGB LED
+XIAO ESP32-C3 ---- planned status RGB LED
    |       |
    |       +------ tare/calibrate button
    |
-   +-- 24-bit bridge ADC (HX711 candidate) -- 5 kg bar load cell
+   +-- SparkFun SEN-15242 / NAU7802 -- TAL220B 5 kg bar load cell
    |
    +-- local Wi-Fi HTTP/WebSocket API ------ phone/desktop PWA
 ```
@@ -95,7 +95,7 @@ Those files do not exist yet and will be created only when the schematic issue i
 ## Current status and milestones
 
 1. Requirements, measurement model, and architecture risk review — baselined in the editable documents below; this is documentation/static evidence only
-2. Datasheet-backed module prototype and calibration fixture
+2. Datasheet-backed module-chain selection and synthetic capture harness — complete; physical fixture/bench characterization explicitly pending
 3. Editable KiCad schematic, ERC, and schematic-backed BOM
 4. Firmware and local protocol with host-side tests
 5. Accessible local PWA and import/export
@@ -106,11 +106,14 @@ Baseline contracts:
 - [System architecture and count/uncertainty model](docs/architecture.md)
 - [Reviewed measurable requirements](hardware/requirements.md)
 - [Planned module wiring and carrier boundary](hardware/interfaces.md)
+- [Datasheet-backed component selection](hardware/selection.md)
+- [Planned module build and capture record](hardware/module-prototype.md)
+- [Datasheet/source manifest](hardware/datasheets/manifest.json)
 - [Unexecuted prototype verification plan](docs/verification-plan.md)
 - [Risk register](docs/risk-register.md)
 - [Machine-readable architecture contract](docs/architecture-contract.json)
 
-Run `python3 scripts/validate_contract.py` and `python3 -m unittest discover -s tests -v` to validate document, safety, dependency, risk, and evidence-state consistency.
+Run `python3 scripts/validate_contract.py` and `python3 -m unittest discover -s tests -v` to validate document, safety, dependency, risk, evidence-state, and synthetic capture-tool consistency.
 
 See [PLAN.md](PLAN.md), [hardware/README.md](hardware/README.md), and the GitHub issue backlog.
 

@@ -37,7 +37,7 @@ Calibration records include empty-bin tare, sample count, sample net mass, deriv
 
 - **ESP32-C3 / XIAO ESP32C3:** inexpensive Wi-Fi/BLE-capable RISC-V MCU module with USB development path and a small module-prototype footprint.
 - **PlatformIO + Arduino framework initially:** fast module bring-up and host-native tests; hardware-facing code remains behind interfaces so ESP-IDF migration is possible.
-- **HX711 breakout candidate:** common load-cell prototype interface. It must be compared against NAU7802 and the chosen IC validated from manufacturer documentation before custom-PCB capture.
+- **SparkFun SEN-15242 / NAU7802 selected:** 3.3 V I2C module with register calibration/diagnostics; initial 10 SPS/PGA128 and 3.0 V AVDD settings. HX711/SEN-13879 remains a documented comparison, not an additional requirement.
 - **KiCad:** editable schematic/PCB, native symbol properties as the BOM source of truth, ERC/DRC evidence, and fabrication exports.
 - **TypeScript/Vite PWA:** phone and desktop access without app-store distribution or cloud hosting.
 - **JSON/CSV:** human-portable local backups with explicit schema versions.

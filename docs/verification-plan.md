@@ -1,7 +1,7 @@
 # Prototype verification plan
 
-**Plan version:** 1.0
-**Baseline date:** 2026-08-19
+**Plan version:** 1.1
+**Baseline date:** 2026-08-20
 **Execution status:** UNEXECUTED — no physical prototype, instrument data, or raw samples are present
 
 This plan defines evidence required by later issues. A checked-in plan, synthetic fixture, render, successful build, or static analyzer is not bench evidence.
@@ -35,8 +35,8 @@ Do not execute load tests until all are true:
 | ID | Stage | Procedure | Pass criterion | Current status |
 |---|---|---|---|---|
 | DOC-01 | Documentation/static | Run `python3 scripts/validate_contract.py` and `python3 -m unittest discover -s tests -v`. | Both exit 0; all required IDs/documents/contracts agree. | Implemented by this issue; result belongs in PR evidence. |
-| SYN-01 | Synthetic software | Feed deterministic zero, step, vibration, drift, creep, disconnect, saturation, stale, and restart fixtures to the measurement domain. | Golden outputs preserve no-count states, bounded recovery, and deterministic count/uncertainty. | Pending #2 capture harness and #4 firmware. |
-| PROTO-READY-01 | Pre-bench | Review datasheets, wiring, mechanical load path, stops, instrument list, and raw capture path. | Reviewer signs all prerequisites; exact revisions recorded. | Pending #2. |
+| SYN-01 | Synthetic software | Feed deterministic zero, step, vibration, drift, creep, disconnect, saturation, stale, and restart fixtures to the measurement domain. | Golden outputs preserve no-count states, bounded recovery, and deterministic count/uncertainty. | Partial: #2 raw capture/analyzer synthetic fixture verifies noise/drift/repeatability/stability calculations and threshold gating; measurement-domain fault/count fixtures remain #4. |
+| PROTO-READY-01 | Pre-bench | Review datasheets, wiring, mechanical load path, stops, instrument list, and raw capture path. | Reviewer signs all prerequisites; exact revisions recorded. | Partial: exact selected chain, planned wiring, capture path, and datasheet review exist. No purchased revisions, fixture/stops, instruments, continuity, or signoff exist. |
 
 ## Characterization matrix
 
@@ -89,3 +89,14 @@ Each must fail safely, retain the last valid state where appropriate, and avoid 
 ## Pending evidence statement
 
 As of this baseline, all physical rows are **Unexecuted**. There is no claim of module assembly, sensor characterization, prototype testing, fabrication, or field use. Issue #2 may execute only the subset supported by hardware actually available; missing work remains a named gap.
+
+The issue #2 software subset is repeatable with:
+
+```bash
+python3 scripts/analyze_capture.py tests/fixtures/synthetic_capture.csv \
+  --evidence-stage synthetic-software --window-samples 10 \
+  --max-band 4 --max-abs-slope 5 --output /tmp/synthetic-report.json
+python3 -m unittest discover -s tests -v
+```
+
+This is synthetic software evidence only. It does not change any physical row to executed.

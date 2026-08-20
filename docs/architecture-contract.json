@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "architecture_version": "1.0",
-  "baseline_date": "2026-08-19",
+  "architecture_version": "1.1",
+  "baseline_date": "2026-08-20",
   "status": "design-contract",
   "safety_scope": {
     "power": "USB 5 V SELV only",
@@ -21,7 +21,21 @@
     "interfaces": "hardware/interfaces.md",
     "protocol": "docs/protocol.md",
     "verification_plan": "docs/verification-plan.md",
-    "risk_register": "docs/risk-register.md"
+    "risk_register": "docs/risk-register.md",
+    "selection": "hardware/selection.md",
+    "datasheet_manifest": "hardware/datasheets/manifest.json"
+  },
+  "selected_hardware": {
+    "controller_sku": "113991054",
+    "adc_module_sku": "SEN-15242",
+    "adc_ic_mpn": "NAU7802SGI",
+    "load_cell_sku": "SEN-14729",
+    "load_cell_model": "TAL220B 5 kg",
+    "interface": "I2C",
+    "dvdd_v": 3.3,
+    "avdd_nominal_v": 3.0,
+    "pga": 128,
+    "baseline_sps": 10
   },
   "subsystems": [
     "mechanical",
@@ -84,9 +98,9 @@
   },
   "evidence_status": {
     "documentation_static": "implemented",
-    "datasheet_selection": "pending",
+    "datasheet_selection": "implemented",
     "simulation": "not-performed",
-    "software": "not-implemented",
+    "software": "capture-harness-tests-only",
     "schematic_layout": "not-implemented",
     "bench": "not-performed",
     "field": "not-performed"

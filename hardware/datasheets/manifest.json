@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "reviewed_utc": "2026-08-20T00:24:42Z",
+  "policy": {
+    "pdfs_committed": false,
+    "reason": "Links, revisions, page citations, and observed hashes are tracked; upstream PDFs are not redistributed.",
+    "verification_basis": "Manufacturer documents are ground truth. Product and distributor pages are used only for orderable SKU, price, and transient availability."
+  },
+  "documents": [
+    {
+      "subject": "Seeed Studio XIAO ESP32-C3 orderable board",
+      "manufacturer": "Seeed Technology Co., Ltd.",
+      "mpn_or_sku": "113991054",
+      "title": "Industrial Product Datasheet — Seeed Studio XIAO ESP32-C3",
+      "url": "https://files.seeedstudio.com/Bazaar/product_pdf/113991054.pdf",
+      "revision": "updated 2026-07-30",
+      "pages": 8,
+      "sha256_observed": "85cd91e41be9d6f07e5f751366efed3fe473cceb06145467b9cae1ad3ec02c9e",
+      "citations": ["p.1 SKU/price", "pp.4-5 interfaces, dimensions, power, current, temperature", "p.6 hardware overview"]
+    },
+    {
+      "subject": "XIAO ESP32-C3 pin mapping",
+      "manufacturer": "Seeed Technology Co., Ltd.",
+      "mpn_or_sku": "113991054",
+      "title": "XIAO ESP32C3 pin definitions and functions",
+      "url": "https://files.seeedstudio.com/wiki/XIAO_WiFi/Resources/XIAO-ESP32C3-pinout_sheet.xlsx",
+      "revision": "download observed 2026-08-20",
+      "sha256_observed": "94b77c5438191904f8aaf43958a1484434e660060d4e403fe274422386761980",
+      "citations": ["GPIO6 = D4/SDA", "GPIO7 = D5/SCL"]
+    },
+    {
+      "subject": "XIAO ESP32-C3 board schematic",
+      "manufacturer": "Seeed Technology Co., Ltd.",
+      "mpn_or_sku": "113991054",
+      "title": "XIAO ESP32C3 schematic",
+      "url": "https://files.seeedstudio.com/wiki/XIAO_WiFi/Resources/Seeeduino-XIAO-ESP32C3-SCH.pdf",
+      "revision": "download observed 2026-08-20",
+      "pages": 1,
+      "sha256_observed": "10eacb7cd87f93f4823bb92d21fc3aa618b75bc9088fe112932f01bb2ce9b24a",
+      "citations": ["p.1 power, USB, header nets, radio module"]
+    },
+    {
+      "subject": "Selected carrier bridge ADC",
+      "manufacturer": "Nuvoton Technology Corporation",
+      "mpn_or_sku": "NAU7802SGI",
+      "title": "NAU7802 24-bit Dual-Channel ADC for Bridge Sensors",
+      "url": "https://www.nuvoton.com/export/resource-files/en-us--DS_NAU7802_DataSheet_EN_Rev2.6.pdf",
+      "revision": "Rev. 2.6",
+      "pages": 40,
+      "sha256_observed": "1d52edc0267ea1c529003af5b29b1088cee01c64a511079258359ede91633a7d",
+      "citations": ["p.4 features", "pp.5-6 pinout", "pp.7-9 electrical characteristics", "pp.12-16 supply/I2C", "p.24 application circuit", "p.28 rates/calibration", "p.38 ordering"]
+    },
+    {
+      "subject": "Selected prototype ADC module",
+      "manufacturer": "SparkFun Electronics",
+      "mpn_or_sku": "SEN-15242",
+      "title": "Qwiic Scale schematic",
+      "url": "https://cdn.sparkfun.com/assets/6/a/5/9/d/Qwiic_Scale.pdf",
+      "revision": "download observed 2026-08-20",
+      "pages": 1,
+      "sha256_observed": "563713f0e512c22afca3f9dc1efa7d3645e55688b8d8944faf0e906ed9d80dee",
+      "citations": ["p.1 NAU7802 nets, bridge terminals, Qwiic 3.3 V warning"]
+    },
+    {
+      "subject": "Selected 5 kg load cell",
+      "manufacturer": "HT Sensor Technology Co., Ltd. (underlying cell); SparkFun orderable SKU",
+      "mpn_or_sku": "SparkFun SEN-14729 / TAL220B 5 kg",
+      "title": "TAL220B Miniature Load Cell",
+      "url": "https://cdn.sparkfun.com/assets/e/5/f/5/6/TAL220B.pdf",
+      "revision": "document metadata 2017-07-21",
+      "pages": 1,
+      "sha256_observed": "641b4150169e53e4e1fd33bc859d30ca371204243dc30b9987d6048ffd021181",
+      "citations": ["p.1 dimensions/drawing, overload, output, excitation, error, creep, temperature, resistance, cable mapping"]
+    },
+    {
+      "subject": "Comparison ADC",
+      "manufacturer": "Avia Semiconductor",
+      "mpn_or_sku": "HX711",
+      "title": "24-Bit Analog-to-Digital Converter (ADC) for Weigh Scales",
+      "url": "https://cdn.sparkfun.com/datasheets/Sensors/ForceFlex/hx711_english.pdf",
+      "revision": "manufacturer document downloaded 2026-08-20",
+      "pages": 9,
+      "sha256_observed": "6050e88a5e938ff9ac3292bfbc9fea2afa0ca73d1a649d5398ae8de5ab7c017e",
+      "citations": ["p.1 features/application", "p.2 pinout", "p.3 electrical characteristics", "pp.4-5 interface/application", "p.9 package"]
+    }
+  ],
+  "sourcing_pages": [
+    {
+      "manufacturer": "Seeed Technology Co., Ltd.",
+      "mpn_or_sku": "113991054",
+      "url": "https://www.seeedstudio.com/Seeed-XIAO-ESP32C3-p-5431.html",
+      "observed": "USD 4.99; page metadata indicated InStock"
+    },
+    {
+      "manufacturer": "SparkFun Electronics",
+      "mpn_or_sku": "SEN-15242",
+      "url": "https://www.sparkfun.com/sparkfun-qwiic-scale-nau7802.html",
+      "observed": "USD 5.95; page rendered In stock"
+    },
+    {
+      "manufacturer": "SparkFun Electronics",
+      "mpn_or_sku": "SEN-14729",
+      "url": "https://www.sparkfun.com/load-cell-5kg-straight-bar-tal220b.html",
+      "observed": "USD 15.50; page rendered In stock"
+    },
+    {
+      "manufacturer": "Nuvoton Technology Corporation",
+      "mpn_or_sku": "NAU7802SGI",
+      "url": "https://www.nuvoton.com/products/smart-home-audio/audio-converters/precision-adc-series/nau7802sgi/",
+      "observed": "current product/resource page and Product Longevity Program link found"
+    },
+    {
+      "manufacturer": "Nuvoton Technology Corporation",
+      "mpn_or_sku": "NAU7802SGI",
+      "url": "https://www.digikey.com/en/products/detail/nuvoton-technology-corporation/NAU7802SGI/2769782",
+      "observed": "DigiKey search reported order today / ships today; quantity and unit price not recorded"
+    },
+    {
+      "manufacturer": "Nuvoton Technology Corporation",
+      "mpn_or_sku": "NAU7802SGI",
+      "url": "https://www.lcsc.com/product-detail/C5180029.html",
+      "observed": "LCSC search reported in stock; transient from-price omitted from BOM"
+    },
+    {
+      "manufacturer": "SparkFun Electronics",
+      "mpn_or_sku": "SEN-13879",
+      "url": "https://www.sparkfun.com/sparkfun-load-cell-amplifier-hx711.html",
+      "observed": "USD 4.95; page rendered In stock. Comparison only; corrected prior retired SEN-13230 URL mismatch"
+    },
+    {
+      "manufacturer": "Avia Semiconductor",
+      "mpn_or_sku": "HX711",
+      "url": "https://www.lcsc.com/product-detail/C6705483.html",
+      "observed": "comparison IC reported in stock; not selected"
+    }
+  ]
+}
