@@ -408,7 +408,7 @@ def main() -> int:
     # PWR_FLAG represents the external USB source for ERC.
     for idx, (net, pos) in enumerate([
         ("VBUS", (78, 60)), ("VBUS_FUSED", (92, 60)),
-        ("+5V_XIAO", (108, 60)), ("+3V3", (210, 55)), ("AVDD_3V0", (285, 55)),
+        ("+5V_XIAO", (108, 60)), ("GND", (210, 55)),
     ], start=1):
         ref = f"#FLG0{idx}"
         add(

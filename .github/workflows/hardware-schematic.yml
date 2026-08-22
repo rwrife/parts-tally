@@ -43,6 +43,7 @@ jobs:
         run: |
           mkdir -p /tmp/parts-tally-kicad
           chmod 777 /tmp/parts-tally-kicad
+          set +e
           docker run --rm \
             -v "$PWD:/work:ro" \
             -v /tmp/parts-tally-kicad:/out \
@@ -51,6 +52,12 @@ jobs:
             kicad-cli sch erc --exit-code-violations \
               -o /out/parts-tally-erc.rpt \
               hardware/kicad/parts-tally.kicad_sch
+          erc_status=$?
+          set -e
+          cat /tmp/parts-tally-kicad/parts-tally-erc.rpt
+          if [ "$erc_status" -ne 0 ]; then
+            exit "$erc_status"
+          fi
           docker run --rm \
             -v "$PWD:/work:ro" \
             -v /tmp/parts-tally-kicad:/out \
@@ -59,7 +66,6 @@ jobs:
             kicad-cli sch export pdf \
               -o /out/parts-tally-schematic.pdf \
               hardware/kicad/parts-tally.kicad_sch
-          cat /tmp/parts-tally-kicad/parts-tally-erc.rpt
 
       - name: Upload ERC and schematic render
         if: always()

@@ -8194,145 +8194,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:PWR_FLAG")
-		(at 284.48 54.61 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced no)
-		(uuid "882a7325-1125-42ef-b1c3-34c66d4d1849")
-		(property "Reference" "#FLG05"
-			(at 284.48 56.515 0.0000)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Value" "PWR_FLAG"
-			(at 284.48 49.53 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 284.48 54.61 0.0000)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Manufacturer" "N/A"
-			(at 287.02 59.6899 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "MPN" "PCB_NET_FLAG"
-			(at 287.02 59.6899 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Supplier" "N/A"
-			(at 287.02 59.6899 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Supplier PN" "N/A"
-			(at 287.02 59.6899 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 284.48 54.61 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Estimated Unit Cost USD" "0"
-			(at 287.02 59.6899 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Price Observed UTC" "2026-08-21"
-			(at 287.02 59.6899 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Stock Observed" "Not verified — distributor API credentials unavailable"
-			(at 287.02 59.6899 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Cost Basis" "Public distributor listing/search estimate; not a quote"
-			(at 287.02 59.6899 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "BOM Comments" "ERC declaration only; not a physical BOM item."
-			(at 287.02 59.6899 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "1"
-			(uuid "70a94a67-7343-422c-910a-d1db4fb12348")
-		)
-		(instances
-			(project "Parts Tally carrier schematic"
-				(path "/efcb4a85-fdf6-4d70-bb67-1fd13c22d2fc"
-					(reference "#FLG05")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Connector:TestPoint")
 		(at 69.85 160.02 0)
 		(unit 1)
@@ -10672,7 +10533,7 @@
 		)
 		(uuid "1042f491-6146-4e13-8c2b-1f5fc17c022f")
 	)
-	(label "+3V3"
+	(label "GND"
 		(at 209.55 54.61 0.0000)
 		(effects
 			(font
@@ -10682,16 +10543,7 @@
 		)
 		(uuid "50b80cf6-5c22-4962-9e79-ffa9f277978a")
 	)
-	(label "AVDD_3V0"
-		(at 284.48 54.61 0.0000)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "15e726ce-6083-47a8-8e10-6eac94d8ae33")
-	)
+
 	(label "VBUS"
 		(at 69.85 160.02 0.0000)
 		(effects

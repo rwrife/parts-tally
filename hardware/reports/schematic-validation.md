@@ -8,14 +8,14 @@
 
 | Check | Result |
 |---|---|
-| `kicad-sch-api` generation | 46 symbols; zero API validation errors; five informational warnings caused by KiCad-standard hidden `#FLGxx` references |
-| KiCad MCP load | Loaded successfully; 46 components |
-| KiCad MCP validate | 0 errors; five warnings, all the same `#FLGxx` parser limitation |
-| `validate_hardware.py` | Pass: 46 symbols, 31 populated BOM components, 107 labeled connection points, 15 intentional NC points, 16 datasheet-checked NAU7802 pins, 6 datasheet-checked RGB LED pins, 16 checked XIAO footprint pads, 13 resolved populated footprints, and exact pad-set checks on J1/J2/J3/U1/U2/D3 |
+| `kicad-sch-api` generation | 45 symbols; zero API validation errors; four informational warnings caused by KiCad-standard hidden `#FLGxx` references |
+| KiCad MCP load | Loaded successfully; 45 components |
+| KiCad MCP validate | 0 errors; four warnings, all the same `#FLGxx` parser limitation |
+| `validate_hardware.py` | Pass: 45 symbols, 31 populated BOM components, 106 labeled connection points, 15 intentional NC points, 16 datasheet-checked NAU7802 pins, 6 datasheet-checked RGB LED pins, 16 checked XIAO footprint pads, 13 resolved populated footprints, and exact pad-set checks on J1/J2/J3/U1/U2/D3 |
 | BOM export/check | Pass: 22 grouped lines / 31 populated components; estimated schematic-only extended total USD 13.1124 |
 | NAU7802 v1.4 extraction consistency | Pass: zero issues |
 | KiCad schematic analyzer | 41 physical components; 40 nets; 100% MPN and datasheet-link coverage; 3 errors, 1 warning after connectivity correction — all triaged below |
-| Native KiCad 9 ERC/PDF | Enforced by `.github/workflows/hardware-schematic.yml`; the committed report is updated from the exact revision after CI |
+| Native KiCad 9 ERC/PDF | Initial CI run found three power-type errors and two configuration warnings; corrected by removing redundant output-rail PWR_FLAGs, adding GND source declaration, and recording the two narrow project/library waivers below. Final CI result is recorded after rerun. |
 
 ## Datasheet verification basis
 
@@ -41,6 +41,11 @@ These are detector limitations, not blanket waivers. Native ERC still gates the 
 - **Lifecycle audit:** attempted for all 19 unique MPNs; distributor APIs returned unknown status for all lines because credentials were unavailable. A live lookup found the initially selected ASMT-YTC2 obsolete, so it was replaced with pin-compatible ASMT-YTC7-0AA02; current JLCPCB price/availability is recorded. Other non-live stock remains marked unverified rather than invented.
 - **Full per-MPN extraction:** structured extraction is complete for the critical NAU7802; remaining manufacturer links were reviewed manually and are not represented as machine-extracted facts.
 - **Bench validation:** no assembled hardware exists. In particular, 3.0 V AVDD/excitation margin, RGB current/brightness, noise, USB inrush, cable polarity, calibration, drift, and RF interaction remain open.
+
+## Native ERC configuration waivers
+
+- `lib_symbol_mismatch`: ignored because the generated schematic embeds its library symbols and separately locks the USB-C and RGB-LED critical pin maps with `validate_hardware.py`; the waiver does not suppress pin-connectivity errors.
+- `footprint_link_issues`: ignored because the headless KiCad container does not resolve the project-local `parts-tally` nickname during ERC. The workflow separately resolves every populated footprint and compares exact pad sets for J1/J2/J3/U1/U2/D3 before ERC.
 
 ## Verdict
 
