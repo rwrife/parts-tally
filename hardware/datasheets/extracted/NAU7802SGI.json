@@ -1,0 +1,129 @@
+{
+  "schema_version": {
+    "base": "1.4",
+    "categories": {}
+  },
+  "source": {
+    "manufacturer": "Nuvoton Technology Corporation",
+    "mpn": "NAU7802SGI",
+    "datasheet_revision": "Rev. 2.6",
+    "datasheet_date": "2023-12-04",
+    "source_url": "https://www.nuvoton.com/export/resource-files/en-us--DS_NAU7802_DataSheet_EN_Rev2.6.pdf",
+    "local_path": "pdfs/NAU7802_Rev2.6.pdf",
+    "sha256": "sha256:1d52edc0267ea1c529003af5b29b1088cee01c64a511079258359ede91633a7d",
+    "page_count": 40,
+    "family_ref": null
+  },
+  "extraction": {
+    "extracted_at": "2026-08-21T00:42:08Z",
+    "extractor_scout": "manual manufacturer-PDF review",
+    "extractor_schema_version": "1.4",
+    "quality_score": 96,
+    "plan_ref": null
+  },
+  "base": {
+    "family": "24-bit dual-channel sigma-delta ADC for bridge sensors",
+    "description": "Low-power bridge ADC with PGA, programmable AVDD LDO, internal oscillator, calibration, and I2C-compatible interface.",
+    "package": {
+      "code": "SOP-16 150 mil",
+      "pin_count": 16,
+      "pitch_mm": 1.27,
+      "body_mm": {
+        "length": 10.0,
+        "width": 3.9,
+        "height": 1.75
+      },
+      "thermal_pad": false,
+      "evidence": {
+        "page": 37,
+        "section": "7.1 SOP-16 Package Dimension",
+        "confidence": "high",
+        "method": "table"
+      }
+    },
+    "thermal": null,
+    "absolute_max": {
+      "DVDD": [{
+        "min": -0.3,
+        "typ": null,
+        "max": 6.0,
+        "unit": "V",
+        "condition": "DVDD-DVSS",
+        "notes": null,
+        "evidence": {"page": 7, "section": "1.1 Absolute Maximum Ratings", "confidence": "high", "method": "table"}
+      }],
+      "AVDD": [{
+        "min": -0.3,
+        "typ": null,
+        "max": 6.0,
+        "unit": "V",
+        "condition": "AVDD-AVSS",
+        "notes": "AVDD shall not exceed DVDD.",
+        "evidence": {"page": 7, "section": "1.1 Absolute Maximum Ratings", "confidence": "high", "method": "table"}
+      }],
+      "analog_input": [{
+        "min": -0.3,
+        "typ": null,
+        "max": null,
+        "unit": "V",
+        "condition": "AVIN-AVSS; upper bound AVDD+0.3 V",
+        "notes": "Upper bound is rail-relative and is retained in condition text.",
+        "evidence": {"page": 7, "section": "1.1 Absolute Maximum Ratings", "confidence": "high", "method": "table"}
+      }],
+      "TA": [{
+        "min": -40,
+        "typ": null,
+        "max": 85,
+        "unit": "°C",
+        "condition": null,
+        "notes": null,
+        "evidence": {"page": 7, "section": "1.1 Absolute Maximum Ratings", "confidence": "high", "method": "table"}
+      }]
+    },
+    "recommended_operating": {
+      "DVDD": [{
+        "min": 2.7,
+        "typ": 3.3,
+        "max": 5.5,
+        "unit": "V",
+        "condition": null,
+        "notes": "Design uses 3.3 V from the XIAO module.",
+        "evidence": {"page": 7, "section": "1.2 DC Electrical Characteristics", "confidence": "high", "method": "table"}
+      }],
+      "AVDD": [{
+        "min": 2.7,
+        "typ": 3.0,
+        "max": 3.3,
+        "unit": "V",
+        "condition": "AVDD must not exceed DVDD",
+        "notes": "Design configures the internal LDO for 3.0 V with DVDD=3.3 V.",
+        "evidence": {"page": 7, "section": "1.2 DC Electrical Characteristics", "confidence": "high", "method": "table"}
+      }]
+    },
+    "esd": null,
+    "moisture_sensitivity": null,
+    "compliance": [],
+    "pinout": [
+      {"numbers":["1"],"name":"REFP","type":"input","subtype":"analog_reference","description":"Positive reference input","power_domain":"AVDD","alt_functions":[],"is_5v_tolerant":null,"absolute_max":null,"recommended":null,"drive_strength":null,"notes":"Connect to AVDD/bridge excitation for ratiometric channel-1 conversion.","evidence":{"page":6,"section":"Pin Description","confidence":"high","method":"table"}},
+      {"numbers":["2"],"name":"VIN1N","type":"input","subtype":"analog","description":"Inverting input channel 1","power_domain":"AVDD","alt_functions":[],"is_5v_tolerant":null,"absolute_max":null,"recommended":null,"drive_strength":null,"notes":null,"evidence":{"page":6,"section":"Pin Description","confidence":"high","method":"table"}},
+      {"numbers":["3"],"name":"VIN1P","type":"input","subtype":"analog","description":"Non-inverting input channel 1","power_domain":"AVDD","alt_functions":[],"is_5v_tolerant":null,"absolute_max":null,"recommended":null,"drive_strength":null,"notes":null,"evidence":{"page":6,"section":"Pin Description","confidence":"high","method":"table"}},
+      {"numbers":["4"],"name":"VIN2N","type":"input","subtype":"analog","description":"Inverting input channel 2","power_domain":"AVDD","alt_functions":[],"is_5v_tolerant":null,"absolute_max":null,"recommended":null,"drive_strength":null,"notes":"Unused in this design.","evidence":{"page":6,"section":"Pin Description","confidence":"high","method":"table"}},
+      {"numbers":["5"],"name":"VIN2P","type":"input","subtype":"analog","description":"Non-inverting input channel 2; Cfilter connection in the single-channel application","power_domain":"AVDD","alt_functions":[],"is_5v_tolerant":null,"absolute_max":null,"recommended":null,"drive_strength":null,"notes":"Connected to 330 pF PGA-output filter capacitor per p.24.","evidence":{"page":6,"section":"Pin Description","confidence":"high","method":"table"}},
+      {"numbers":["6"],"name":"VBG","type":"output","subtype":"analog_reference","description":"High-impedance reference output and bypass","power_domain":"AVDD","alt_functions":[],"is_5v_tolerant":null,"absolute_max":null,"recommended":null,"drive_strength":null,"notes":"Bypass with 0.1 uF and connect Cfilter as shown on p.24.","evidence":{"page":6,"section":"Pin Description","confidence":"high","method":"table"}},
+      {"numbers":["7"],"name":"REFN","type":"input","subtype":"analog_reference","description":"Negative reference input","power_domain":null,"alt_functions":[],"is_5v_tolerant":null,"absolute_max":null,"recommended":null,"drive_strength":null,"notes":"Connect to AVSS/GND for ratiometric measurement.","evidence":{"page":6,"section":"Pin Description","confidence":"high","method":"table"}},
+      {"numbers":["8"],"name":"AVSS","type":"power_in","subtype":"analog_ground","description":"Analog ground","power_domain":null,"alt_functions":[],"is_5v_tolerant":null,"absolute_max":null,"recommended":null,"drive_strength":null,"notes":null,"evidence":{"page":6,"section":"Pin Description","confidence":"high","method":"table"}},
+      {"numbers":["9"],"name":"DVSS","type":"power_in","subtype":"digital_ground","description":"Digital ground","power_domain":null,"alt_functions":[],"is_5v_tolerant":null,"absolute_max":null,"recommended":null,"drive_strength":null,"notes":null,"evidence":{"page":6,"section":"Pin Description","confidence":"high","method":"table"}},
+      {"numbers":["10"],"name":"XIN","type":"input","subtype":"clock","description":"External crystal oscillator input","power_domain":"DVDD","alt_functions":[],"is_5v_tolerant":null,"absolute_max":null,"recommended":null,"drive_strength":null,"notes":"Unused; internal RC oscillator selected.","evidence":{"page":6,"section":"Pin Description","confidence":"high","method":"table"}},
+      {"numbers":["11"],"name":"XOUT","type":"output","subtype":"clock","description":"External crystal oscillator output","power_domain":"DVDD","alt_functions":[],"is_5v_tolerant":null,"absolute_max":null,"recommended":null,"drive_strength":null,"notes":"Unused; internal RC oscillator selected.","evidence":{"page":6,"section":"Pin Description","confidence":"high","method":"table"}},
+      {"numbers":["12"],"name":"DRDY","type":"output","subtype":"push_pull","description":"CMOS data-ready output","power_domain":"DVDD","alt_functions":[],"is_5v_tolerant":false,"absolute_max":null,"recommended":null,"drive_strength":null,"notes":"Optional and intentionally unused; firmware polls conversion-ready state over I2C.","evidence":{"page":6,"section":"Pin Description","confidence":"high","method":"table"}},
+      {"numbers":["13"],"name":"SCLK","type":"input","subtype":"i2c_clock","description":"Serial data clock input","power_domain":"DVDD","alt_functions":[],"is_5v_tolerant":false,"absolute_max":null,"recommended":null,"drive_strength":null,"notes":"Pulled up to 3.3 V on carrier.","evidence":{"page":6,"section":"Pin Description","confidence":"high","method":"table"}},
+      {"numbers":["14"],"name":"SDIO","type":"bidirectional","subtype":"open_drain","description":"Serial data input/output","power_domain":"DVDD","alt_functions":[],"is_5v_tolerant":false,"absolute_max":null,"recommended":null,"drive_strength":null,"notes":"Pulled up to 3.3 V on carrier.","evidence":{"page":6,"section":"Pin Description","confidence":"high","method":"table"}},
+      {"numbers":["15"],"name":"DVDD","type":"power_in","subtype":"digital_supply","description":"Digital supply, 2.7 V to 5.5 V","power_domain":"DVDD","alt_functions":[],"is_5v_tolerant":null,"absolute_max":null,"recommended":null,"drive_strength":null,"notes":"Design uses 3.3 V.","evidence":{"page":6,"section":"Pin Description","confidence":"high","method":"table"}},
+      {"numbers":["16"],"name":"AVDD/LDO","type":"power_out","subtype":"analog_supply","description":"Analog supply or programmable internal-LDO output","power_domain":"AVDD","alt_functions":[],"is_5v_tolerant":null,"absolute_max":null,"recommended":null,"drive_strength":null,"notes":"Internal LDO output in this design; configure 3.0 V and bypass with low-ESR 1 uF.","evidence":{"page":6,"section":"Pin Description","confidence":"high","method":"table"}}
+    ],
+    "pin_relationships": [
+      {"type":"requires_pullup","pins":["13","14"],"notes":"I2C bus uses carrier-owned 4.7 kΩ pull-ups to DVDD.","evidence":{"page":13,"section":"1.9 I2C-style interface","confidence":"high","method":"prose"}}
+    ]
+  },
+  "categories": []
+}

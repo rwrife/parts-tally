@@ -1,0 +1,7 @@
+Reference,Qty,Item,Manufacturer,MPN,Supplier_or_source,Estimated_unit_cost_USD,Status,Notes
+EXT1,1,4-wire 5 kg load cell,HT Sensor Technology,TAL220B-5KG,SparkFun SEN-14729,TBD,prototype item,"Bench characterization/calibration required; wire colors must be continuity-checked before connection."
+EXT2,1,JST GH mating housing,JST,GHR-04V-S,DigiKey 455-1564-ND,TBD,required,"Mates with J2; order contacts separately."
+EXT3,4,JST GH crimp contact,JST,SSHL-002T-P0.2,DigiKey 455-2148-1-ND,TBD,required,"Requires suitable crimp tooling or pre-crimped leads."
+EXT4,1,USB-C cable and SELV USB supply,TBD,TBD,User-supplied,TBD,required,"Use a compliant SELV USB source; no mains circuitry is present on the carrier."
+EXT5,1,Enclosure,TBD,TBD,Mechanical design pending,TBD,pending,"Issue #5 dependency; no enclosure MPN or fabrication claim yet."
+EXT6,1,Mounting hardware set,TBD,TBD,Mechanical design pending,TBD,pending,"Fastener quantity/size follows PCB and enclosure completion."

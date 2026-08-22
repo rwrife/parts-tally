@@ -26,8 +26,8 @@ The exact planned logical wiring map and carrier-board ownership boundary are ve
 
 - SELV 5 V USB input only for MVP
 - Use the controller module's regulated rail for logic, subject to measured noise/current validation
-- Initial module setting is 3.3 V DVDD/Qwiic and 3.0 V nominal AVDD/excitation; measure this boundary condition before schematic release
-- Add input protection, decoupling, analog filtering, and connector protection in the schematic as justified by datasheets
+- The carrier schematic uses 3.3 V DVDD and a 3.0 V nominal internal-LDO AVDD/excitation setting; measure this boundary condition before PCB release
+- Input protection, decoupling, bridge filtering, keyed load-cell connection, and reverse-current blocking are captured in the editable schematic
 - No battery or charger in revision A
 
 ## Mechanical and enclosure concept
@@ -44,7 +44,7 @@ A rigid base holds one end of a straight-bar load cell; a top plate/bin cradle a
 
 ## Editable KiCad deliverables
 
-The carrier-board milestone must create and preserve:
+The carrier-board milestone preserves:
 
 - `kicad/parts-tally.kicad_pro`
 - `kicad/parts-tally.kicad_sch`
@@ -54,7 +54,9 @@ The carrier-board milestone must create and preserve:
 - schematic PDF and PCB renders as supplements, never substitutes
 - fabrication Gerbers, drill files, CPL when applicable, and release archive
 
-Final Manufacturer, MPN, supplier, and BOM-note data lives in KiCad symbol properties. `../bom/preliminary-bom.csv` is not authoritative.
+The project/schematic, project-local symbols/footprints, schematic generator, acceptance validator, datasheet extraction, and schematic-backed BOM are present. The `.kicad_pcb`, DRC, and fabrication outputs are correctly deferred to the PCB/layout milestone.
+
+Final Manufacturer, MPN, supplier, price-observation, stock-observation, datasheet, and BOM-note data lives in KiCad symbol properties. `../bom/preliminary-bom.csv` is not authoritative. From the repository root, regenerate the tracked BOM with `python3 hardware/kicad/export_bom.py`, or follow [`kicad/README.md`](kicad/README.md).
 
 ## Key layout constraints for the carrier revision
 
@@ -67,4 +69,6 @@ Final Manufacturer, MPN, supplier, and BOM-note data lives in KiCad symbol prope
 
 ## Current evidence
 
-The exact module chain, manufacturer-document/source manifest, planned wiring, current price/availability snapshot, and synthetic capture/analyzer tests now exist. No editable KiCad project, ERC/DRC output, firmware/app implementation, electrical simulation, physical fixture/assembly, continuity result, measurement, fabrication, or field evidence exists yet.
+The editable KiCad project and schematic, project-local symbols/footprints, manufacturer-document/source manifest, schematic-exported BOM, targeted static validator, and schematic analysis now exist. See [`kicad/README.md`](kicad/README.md) and [`reports/schematic-validation.md`](reports/schematic-validation.md).
+
+No PCB/DRC, firmware/app implementation, electrical simulation, physical fixture/assembly, continuity result, measurement, fabrication, or field evidence exists yet. The design remains explicitly pre-layout and untested in hardware.

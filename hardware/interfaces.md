@@ -1,7 +1,7 @@
 # Module prototype wiring and carrier boundary
 
-**Interface map version:** 1.1<br>
-**Status:** exact controller/ADC/load-cell module wiring selected and statically reviewed; assembly/continuity/bench evidence absent
+**Interface map version:** 1.2<br>
+**Status:** module prototype map retained; carrier schematic pin assignments added and statically reviewed; assembly/continuity/bench evidence absent
 
 This file defines logical nets and ownership. Exact selection evidence is in [`selection.md`](selection.md), document hashes/links in [`datasheets/manifest.json`](datasheets/manifest.json), and the pre-power/capture record in [`module-prototype.md`](module-prototype.md). Wire color alone is never pinout evidence.
 
@@ -25,7 +25,7 @@ TAL220B green / white signal leads
   -> SEN-15242 A+ / A-
 ```
 
-Selected electrical defaults are 3.3 V DVDD/Qwiic logic, 3.0 V nominal AVDD/bridge excitation, channel 1, PGA 128, and 10 SPS. These are datasheet-reviewed starting settings, not measured values or final thresholds. Button/status hardware is explicitly deferred; BOOT/RESET is not the user-control design.
+Selected electrical defaults are 3.3 V DVDD/Qwiic logic, 3.0 V nominal AVDD/bridge excitation, channel 1, PGA 128, and 10 SPS. These are datasheet-reviewed starting settings, not measured values or final thresholds. The carrier uses a dedicated button and discrete RGB indicator; BOOT/RESET remains reserved for recovery.
 
 ## Wiring record
 
@@ -40,8 +40,11 @@ Selected electrical defaults are 3.3 V DVDD/Qwiic logic, 3.0 V nominal AVDD/brid
 | Excitation negative | SEN-15242 `E-` | TAL220B black | excitation return | Same | Datasheet/static only |
 | Signal positive | TAL220B green | SEN-15242 `A+` | differential analog | Same | Datasheet/static only; polarity trial pending |
 | Signal negative | TAL220B white | SEN-15242 `A-` | differential analog | Same | Datasheet/static only; polarity trial pending |
-| Physical user input | Dedicated button network | TBD controller GPIO | 3.3 V logic | Deferred exact part/controller boot review | Deferred to #3/#4 |
-| User status | Dedicated LED network | TBD controller GPIO | logic/current TBD | Deferred exact part/current/brightness review | Deferred to #3/#4 |
+| Physical user input | PTS810 active-low button, 10 kΩ pull-up, 100 nF debounce | XIAO D1/GPIO3 | 3.3 V logic | KiCad schematic; Seeed pin map | Static only; firmware and bench timing pending |
+| User status red | ASMT-YTC7 red cathode through 220 Ω | XIAO D2/GPIO4 | 3.3 V active-low sink | KiCad schematic; Broadcom AV02-3819EN | Static only; current/brightness measurement pending |
+| User status green | ASMT-YTC7 green cathode through 220 Ω | XIAO D3/GPIO5 | 3.3 V active-low sink | Same | Static only; current/brightness measurement pending |
+| User status blue | ASMT-YTC7 blue cathode through 220 Ω | XIAO D10/GPIO10 | 3.3 V active-low sink | Same | Static only; current/brightness measurement pending |
+| UART debug | J3 pin 3 TX / pin 4 RX | XIAO D6/GPIO21 and D7/GPIO20 | 3.3 V logic | KiCad schematic; Seeed pin map | Static only; target communication pending |
 
 ## Harness and physical controls
 
@@ -50,12 +53,12 @@ Selected electrical defaults are 3.3 V DVDD/Qwiic logic, 3.0 V nominal AVDD/brid
 - Add strain relief so cable movement cannot pull ADC/load-cell terminals.
 - Preserve manufacturer antenna clearance from load-cell metal, fasteners, wiring loops, and enclosure features.
 - Mount electronics outside the force path and away from overload-stop contact.
-- Provide later carrier test access for USB 5 V, 3V3, GND, AVDD/bridge excitation, I2C data/clock, and safe differential inputs.
+- Carrier TP1–TP10 provide access for USB VBUS, protected 5 V, 3V3, GND, AVDD/bridge excitation, I2C data/clock, differential inputs, and VBG; layout/access review remains pending.
 - The SEN-15242 spring terminal is a prototype convenience, not the carrier's keyed connector decision.
 
 ## Carrier-board boundary
 
-The future carrier accepts:
+The carrier schematic accepts:
 
 - XIAO ESP32-C3 SKU 113991054 or a separately reviewed exact replacement;
 - Nuvoton NAU7802SGI in SOP-16 and the Rev. 2.6 application/reference components;
@@ -75,8 +78,8 @@ The carrier schematic owns protection, decoupling, 3.3 V/AVDD generation, I2C pu
 5. A disconnected, stale, saturated, calibration-error, or overload-indicated sensor produces no count.
 6. Networking is not required for the physical status/recovery path.
 7. The exact built wiring and part markings are recorded with characterization data.
-8. 3.0 V AVDD/excitation is a boundary condition that must be measured before schematic release.
+8. 3.0 V AVDD/excitation is a boundary condition that must be measured before PCB release.
 
 ## Evidence boundary
 
-This map is an exact planned configuration supported by manufacturer documents. It is not a schematic, continuity result, assembly record, bench test, or field test. No physical prototype or photos are available.
+This map is implemented in `kicad/parts-tally.kicad_sch` and supported by manufacturer documents. It is not a continuity result, assembly record, bench test, or field test. No physical prototype or photos are available.
