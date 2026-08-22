@@ -1,0 +1,72 @@
+name: Hardware schematic
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-schematic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: hardware/kicad/requirements.txt
+
+      - name: Install schematic tooling
+        run: pip install -r hardware/kicad/requirements.txt
+
+      - name: Provide KiCad 9 symbol libraries to static checks
+        run: |
+          docker pull kicad/kicad:9.0
+          docker create --name parts-tally-kicad-assets kicad/kicad:9.0
+          docker cp parts-tally-kicad-assets:/usr/share/kicad/symbols /tmp/kicad-symbols
+          docker cp parts-tally-kicad-assets:/usr/share/kicad/footprints /tmp/kicad-footprints
+          docker rm parts-tally-kicad-assets
+          echo "KICAD_SYMBOL_DIR=/tmp/kicad-symbols" >> "$GITHUB_ENV"
+          echo "KICAD_FOOTPRINT_DIR=/tmp/kicad-footprints" >> "$GITHUB_ENV"
+
+      - name: Validate pin maps, connectivity intent, NCs, BOM fields, and extraction
+        run: python hardware/kicad/validate_hardware.py
+
+      - name: Verify schematic-backed BOM is current
+        run: python hardware/kicad/export_bom.py --check
+
+      - name: Run native KiCad 9 ERC and render schematic
+        run: |
+          mkdir -p /tmp/parts-tally-kicad
+          chmod 777 /tmp/parts-tally-kicad
+          docker run --rm \
+            -v "$PWD:/work:ro" \
+            -v /tmp/parts-tally-kicad:/out \
+            -w /work \
+            kicad/kicad:9.0 \
+            kicad-cli sch erc --exit-code-violations \
+              -o /out/parts-tally-erc.rpt \
+              hardware/kicad/parts-tally.kicad_sch
+          docker run --rm \
+            -v "$PWD:/work:ro" \
+            -v /tmp/parts-tally-kicad:/out \
+            -w /work \
+            kicad/kicad:9.0 \
+            kicad-cli sch export pdf \
+              -o /out/parts-tally-schematic.pdf \
+              hardware/kicad/parts-tally.kicad_sch
+          cat /tmp/parts-tally-kicad/parts-tally-erc.rpt
+
+      - name: Upload ERC and schematic render
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: parts-tally-schematic-evidence
+          path: |
+            /tmp/parts-tally-kicad/parts-tally-erc.rpt
+            /tmp/parts-tally-kicad/parts-tally-schematic.pdf
+          if-no-files-found: warn

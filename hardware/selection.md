@@ -1,7 +1,7 @@
 # Datasheet-backed measurement-chain selection
 
-**Selection revision:** 1.0<br>
-**Reviewed:** 2026-08-20T00:24:42Z<br>
+**Selection revision:** 1.1<br>
+**Reviewed:** 2026-08-21T00:42:08Z<br>
 **Evidence class:** manufacturer-document review and current web sourcing; no physical assembly or measurements
 
 ## Decision
@@ -16,7 +16,7 @@ Use this exact module-prototype chain:
 | Load cell | SparkFun Electronics orderable SKU; HT Sensor underlying cell | **SEN-14729**, containing **TAL220B 5 kg** | Four-wire full bridge; 3–10 V excitation; planned 3.0 V nominal excitation from the ADC module |
 | Controller-to-ADC cable | SparkFun Electronics | **CAB-17261** — flexible Qwiic female-jumper cable | Female Qwiic end at SEN-15242; individual jumpers to XIAO header pins |
 
-The button, user-status LED, and carrier load-cell connector are intentionally **not selected in this issue**. The module prototype may use host commands for capture, but the later product still requires a dedicated button and text/icon/color-capable status. Reusing BOOT/RESET as the product control is rejected because those pins are part of recovery. The carrier connector is deferred until enclosure/strain-relief geometry exists. This is explicit deferral, not an undocumented BOM gap.
+The carrier schematic now selects **PTS810SJM250SMTRLFS** for the dedicated button, **ASMT-YTC7-0AA02** for the discrete RGB status indicator, and **SM04B-GHS-TB(LF)(SN)** for the keyed load-cell connector. YTC7 replaces the obsolete but electrically pin-compatible YTC2 draft selection. Reusing BOOT/RESET as the product control remains rejected because those pins are part of recovery. J2's exact enclosure/strain-relief interaction remains a PCB/mechanical review item, and its LCSC listing was out of stock on 2026-08-21.
 
 ## Why NAU7802 rather than HX711
 
@@ -51,7 +51,7 @@ Seeed's 113991054 product datasheet identifies the exact SKU, 21 mm × 17.8 mm b
 
 Power SEN-15242 from XIAO **3V3**, never 5 V while it is connected to the XIAO I2C pins. SparkFun's Qwiic Scale schematic warns that the module can accept 2.7–5.5 V but a Qwiic bus must not exceed 3.3 V. The board provides 2.2 kΩ I2C pull-ups (hookup guide, “I2C Jumper”). Do not add another strong pull-up bank during the module experiment.
 
-The Nuvoton datasheet requires DVDD to be at least 0.3 V above the selected internal AVDD setting. With 3.3 V module power, configure **3.0 V nominal AVDD** rather than the SparkFun library's commonly shown 3.3 V setting. This also sits at the TAL220B's documented 3 V minimum excitation. Because both constraints meet at the boundary, actual bridge excitation must be measured and any low-voltage behavior recorded before schematic capture. If 3.0 V cannot be maintained, the schematic must use a reviewed external/reference topology rather than silently violating either document.
+The Nuvoton datasheet requires DVDD to be at least 0.3 V above the selected internal AVDD setting. With 3.3 V module power, configure **3.0 V nominal AVDD** rather than the SparkFun library's commonly shown 3.3 V setting. This also sits at the TAL220B's documented 3 V minimum excitation. Because both constraints meet at the boundary, actual bridge excitation must be measured and any low-voltage behavior recorded before PCB release. If 3.0 V cannot be maintained, the design must use a reviewed external/reference topology rather than silently violating either document.
 
 Initial ADC settings:
 
@@ -62,7 +62,7 @@ Initial ADC settings:
 - discard at least the documented post-reset settling conversions before accepting stability;
 - compare 80 SPS only as a separate latency/noise condition; do not merge its thresholds with 10 SPS data.
 
-For the carrier schematic, begin from Nuvoton Rev. 2.6 p. 24: 47 Ω series input resistors, 0.1 µF differential input filtering, 0.1 µF VBG bypass, and 1 µF supply capacitors. Validate whether the module's 330 pF channel capacitor and SparkFun-specific jumpers should be reproduced. Values are starting requirements, not a released schematic.
+The carrier schematic follows Nuvoton Rev. 2.6 p. 24: 47 Ω series input resistors, 0.1 µF differential input filtering, 0.1 µF VBG bypass, 1 µF DVDD/AVDD capacitors, and the optional 330 pF PGA-output filter between VIN2P and VBG. Firmware must enable `PGA_CAP_EN`; SparkFun-specific jumpers were not reproduced. These values are schematic/static evidence, not measured performance.
 
 ### Load cell
 

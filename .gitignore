@@ -1,3 +1,13 @@
 __pycache__/
 *.py[cod]
 .worktrees/
+.venv/
+
+# Downloaded manufacturer PDFs/text are reproducible from the manifest.
+hardware/datasheets/pdfs/
+
+# Local KiCad/editor output.
+hardware/kicad/~*
+hardware/kicad/*.lck
+hardware/kicad/*.bak
+hardware/kicad/*.kicad_prl

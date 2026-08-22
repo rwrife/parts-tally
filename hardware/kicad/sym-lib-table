@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "parts-tally")(type "KiCad")(uri "${KIPRJMOD}/lib/parts-tally.kicad_sym")(options "")(descr "Parts Tally project symbols"))
+)

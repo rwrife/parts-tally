@@ -1,6 +1,29 @@
 {
   "schema_version": 1,
-  "reviewed_utc": "2026-08-20T00:24:42Z",
+  "version": "1.0",
+  "last_updated": "2026-08-22T00:28:34Z",
+  "pdfs": {
+    "sha256:1d52edc0267ea1c529003af5b29b1088cee01c64a511079258359ede91633a7d": {
+      "path": "pdfs/NAU7802_Rev2.6.pdf",
+      "mpns": ["NAU7802SGI"],
+      "source_url": "https://www.nuvoton.com/export/resource-files/en-us--DS_NAU7802_DataSheet_EN_Rev2.6.pdf",
+      "is_family": false
+    }
+  },
+  "extractions": {
+    "NAU7802SGI": {
+      "file": "extracted/NAU7802SGI.json",
+      "mpn": "NAU7802SGI",
+      "category": "adc",
+      "source_pdf": "pdfs/NAU7802_Rev2.6.pdf",
+      "source_pdf_hash": "1d52edc0267ea1c529003af5b29b1088cee01c64a511079258359ede91633a7d",
+      "extraction_date": "2026-08-21T00:42:08Z",
+      "extraction_score": 96,
+      "extraction_version": 14,
+      "pin_count": 16
+    }
+  },
+  "reviewed_utc": "2026-08-22T00:28:34Z",
   "policy": {
     "pdfs_committed": false,
     "reason": "Links, revisions, page citations, and observed hashes are tracked; upstream PDFs are not redistributed.",
@@ -49,6 +72,17 @@
       "pages": 40,
       "sha256_observed": "1d52edc0267ea1c529003af5b29b1088cee01c64a511079258359ede91633a7d",
       "citations": ["p.4 features", "pp.5-6 pinout", "pp.7-9 electrical characteristics", "pp.12-16 supply/I2C", "p.24 application circuit", "p.28 rates/calibration", "p.38 ordering"]
+    },
+    {
+      "subject": "Selected RGB status indicator",
+      "manufacturer": "Broadcom Limited",
+      "mpn_or_sku": "ASMT-YTC7-0AA02",
+      "title": "ASMT-YTC7-0AA02 Tricolor PLCC6 Black Body LED",
+      "url": "https://docs.broadcom.com/docs/AV02-3819EN",
+      "revision": "AV02-3819EN, 2015-10-15",
+      "pages": 12,
+      "sha256_observed": "c3ead17f4d6d59c381b817631b589c4cc0baaca61aae52dc681ef7b9fe471957",
+      "citations": ["p.2 package dimensions and lead configuration", "p.3 absolute maximum ratings and electrical characteristics"]
     },
     {
       "subject": "Selected prototype ADC module",
@@ -132,6 +166,12 @@
       "mpn_or_sku": "HX711",
       "url": "https://www.lcsc.com/product-detail/C6705483.html",
       "observed": "comparison IC reported in stock; not selected"
+    },
+    {
+      "manufacturer": "Broadcom Limited",
+      "mpn_or_sku": "ASMT-YTC7-0AA02",
+      "url": "https://jlcpcb.com/partdetail/BroadcomLimited-ASMT_YTC70AA02/C5555828",
+      "observed": "JLCPCB C5555828; in-stock extended part; overseas stock 79; 1-piece price USD 1.7772 on 2026-08-22 UTC"
     }
   ]
 }

@@ -84,19 +84,19 @@ Parts Tally is a SELV/USB 5 V bench device. Do not connect it to mains, exceed t
 
 Final BOM data belongs in **KiCad schematic symbol properties** (`Manufacturer`, `MPN`, supplier fields, and BOM notes) and is exported to `bom/bom.csv`. `bom/preliminary-bom.csv` is only a planning document and must not drift into a competing source of truth.
 
-The hardware release will contain real editable KiCad sources—not image-only drawings—including:
+The hardware release uses real editable KiCad sources—not image-only drawings—including:
 
 - `hardware/kicad/parts-tally.kicad_pro`
 - `hardware/kicad/parts-tally.kicad_sch`
 - `hardware/kicad/parts-tally.kicad_pcb`
 
-Those files do not exist yet and will be created only when the schematic issue is implemented with real ERC/DRC evidence.
+The project and schematic now exist. The PCB remains intentionally absent until the layout issue is reached; no Gerber, assembly, or fabricated-board claim is implied. The schematic source, custom library, validation notes, and schematic-exported BOM live under `hardware/kicad/`, `hardware/reports/`, and `bom/`.
 
 ## Current status and milestones
 
 1. Requirements, measurement model, and architecture risk review — baselined in the editable documents below; this is documentation/static evidence only
 2. Datasheet-backed module-chain selection and synthetic capture harness — complete; physical fixture/bench characterization explicitly pending
-3. Editable KiCad schematic, ERC, and schematic-backed BOM
+3. Editable KiCad schematic and schematic-backed BOM — implemented; CI-native ERC and static review evidence are recorded under `hardware/reports/`
 4. Firmware and local protocol with host-side tests
 5. Accessible local PWA and import/export
 6. Carrier PCB, DRC, assembly/bring-up, and fabrication release
