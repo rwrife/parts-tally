@@ -15,7 +15,7 @@
 | BOM export/check | Pass: 22 grouped lines / 31 populated components; estimated schematic-only extended total USD 13.1124 |
 | NAU7802 v1.4 extraction consistency | Pass: zero issues |
 | KiCad schematic analyzer | 41 physical components; 40 nets; 100% MPN and datasheet-link coverage; 3 errors, 1 warning after connectivity correction — all triaged below |
-| Native KiCad 9 ERC/PDF | Initial CI run found three power-type errors and two configuration warnings; corrected by removing redundant output-rail PWR_FLAGs, adding GND source declaration, and recording the two narrow project/library waivers below. Final CI result is recorded after rerun. |
+| Native KiCad 9 ERC/PDF | Pass in [Actions run 32541334009](https://github.com/rwrife/parts-tally/actions/runs/32541334009): 0 errors, 0 warnings; one-page schematic PDF exported (1,475,837 bytes) |
 
 ## Datasheet verification basis
 
