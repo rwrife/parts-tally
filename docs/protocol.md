@@ -1,125 +1,93 @@
-# Parts Tally local protocol (draft v0)
+# Parts Tally local protocol v1
 
-This is an initial contract for issue-driven refinement. It does not describe an implemented endpoint. Measurement semantics and no-count behavior are governed by [`architecture.md`](architecture.md).
+**Status:** implemented in firmware and native/contract-tested; target networking, NVS, button,
+ADC, and WebSocket behavior still require physical verification.
 
-## Boundary and transport
+The device exposes a direct AP on every boot and serves local UTF-8 JSON over HTTP under
+`/api/v1`; WebSocket events use port 81 at `/api/v1/events`. If stored Wi-Fi credentials exist,
+the target also starts an asynchronous STA association without taking down the AP. LAN failure
+therefore does not remove the direct API. No Internet service is required. Transport is plaintext,
+so a trusted local network is required and an on-path observer can see bearer traffic.
 
-- Local-only HTTP JSON commands under `/api/v1`
-- WebSocket event stream at `/api/v1/events`
-- UTF-8 JSON; timestamps are RFC 3339 UTC where wall-clock time exists, otherwise monotonic sample age is reported
-- Device-hosted PWA assets may share the same origin
-- No Internet service is required
+## Sessions and provisioning
 
-## Discovery and setup
+Holding the dedicated GPIO3 button at power-up opens a five-minute physical-presence setup
+session. `GET /api/v1/setup/session` requires no bearer but returns the setup token only while that
+session is active. A setup token is accepted only under `/api/v1/setup/*`; an authenticated token is
+accepted only on normal API routes.
 
-The unprovisioned device may expose a temporary setup AP with a unique, non-secret SSID suffix. Setup must show a user-verifiable device identifier. Mutating setup actions use a short-lived physical-presence session opened by holding the device button. BLE provisioning remains an evaluated option, not part of v0.
+`POST /api/v1/setup/provision` requires the setup bearer, exact configured Origin,
+`application/json`, and an idempotency key. Its envelope includes `wifiSsid`, `wifiPassword`, and a
+new `deviceSecret` of 16–128 characters. An empty SSID with an empty password selects direct-only
+mode. Success atomically persists credentials, invalidates setup scope, starts STA when an SSID was
+provided, and returns a fresh five-minute authenticated token.
 
-## Security assumptions
+`POST /api/v1/session` requires no prior bearer or idempotency key, but does require exact Origin,
+`application/json`, the standard command envelope, and the persisted `deviceSecret`. Success returns
+a fresh entropy-generated five-minute authenticated token. Wrong credentials return 401. Target
+tokens come from `esp_random`; native tests inject deterministic token generation.
 
-- The LAN is not automatically trusted.
-- After provisioning, mutating requests require a per-device secret established during a physical-presence setup session.
-- Secrets never appear in normal logs, URLs, history exports, or JSON backups.
-- Read-only status exposure defaults to authenticated; a user may explicitly enable limited unauthenticated status on a trusted LAN.
-- State-changing requests validate origin/content type and use replay-resistant session tokens.
-- Factory reset and credential rotation require a deliberate physical action.
-- TLS on a self-hosted constrained device is an open design decision; documentation must state the actual protection and residual LAN risk rather than claiming end-to-end security prematurely.
+All other routes require an unexpired authenticated bearer. Mutations also require exact Origin,
+`application/json`, a body no larger than 8192 bytes, and an `Idempotency-Key` of 1–128 characters.
+The last 64 successful/client-error mutation results are replayed; server failures are not cached,
+so the same idempotency key can retry after storage recovery. Reuse for different request content
+returns 409.
 
-## Common envelope
+## Routes
 
-```json
-{
-  "protocol": "parts-tally/v1",
-  "requestId": "client-generated-id",
-  "deviceId": "non-secret-stable-id"
-}
-```
-
-Errors:
-
-```json
-{
-  "protocol": "parts-tally/v1",
-  "requestId": "...",
-  "error": {
-    "code": "measurement_unstable",
-    "message": "Wait for the platform to settle",
-    "retryable": true
-  }
-}
-```
-
-## Read endpoints
-
-### `GET /api/v1/status`
-
-Returns version, connectivity, sensor/fault state, current profile, and measurement:
-
-```json
-{
-  "protocol": "parts-tally/v1",
-  "deviceId": "pt-...",
-  "firmwareVersion": "0.1.0",
-  "measurement": {
-    "state": "stable",
-    "raw": 123456,
-    "netGrams": 84.2,
-    "stable": true,
-    "noiseGrams": 0.03,
-    "estimatedCount": 42,
-    "uncertaintyPieces": 1,
-    "sampleAgeMs": 80
-  },
-  "faults": []
-}
-```
-
-`measurement.state` is one of `stable`, `unstable`, `stale`, `disconnected`, `saturated`, `overload_indicated`, `below_tare`, `uncalibrated`, `calibration_invalid`, or `uncertainty_excessive`. In every no-count state, `estimatedCount` and `uncertaintyPieces` are `null`; clients must not retain a previous count as current. Additive diagnostic fields may explain the rejected reading. A `stable` state is still not legal-for-trade or certified measurement evidence.
-
-### `GET /api/v1/profiles`
-
-Returns versioned profile summaries. Calibration records include unit mass, sample count, tare, creation time, and revision.
-
-### `GET /api/v1/history?cursor=...&limit=...`
-
-Returns bounded, paginated count/calibration/correction events.
-
-## Mutating commands
-
-All require authentication and an idempotency/request identifier.
-
+- `GET /api/v1/status`
+- `GET /api/v1/profiles`
+- `GET /api/v1/history?after=SEQUENCE&limit=COUNT` (`after` is an unsigned 64-bit decimal;
+  `limit` defaults to 50 and must be 1–100; each parameter may appear at most once and no other
+  query parameters are accepted)
+- `GET /api/v1/export`
 - `POST /api/v1/actions/tare`
-- `POST /api/v1/actions/calibrate` with profile ID and known sample count
+- `POST /api/v1/actions/calibrate` (`knownCount` is 10–1,000,000; a fresh device with no scale
+  factor also requires finite positive `knownSampleMassGrams` and derives its scale from that mass)
 - `POST /api/v1/profiles`
 - `PATCH /api/v1/profiles/{id}`
 - `DELETE /api/v1/profiles/{id}`
-- `POST /api/v1/counts/{eventId}/correction`
-- `POST /api/v1/import/preview` then `POST /api/v1/import/apply`
-- `DELETE /api/v1/history`
+- `POST /api/v1/counts/{eventId}/correction` (requires profile, bounded count, and a nonempty
+  reason of at most 200 characters)
+- `POST /api/v1/import/preview`
+- `POST /api/v1/import/apply` (requires the exact preview token, unchanged import payload, same
+  authenticated session, and use within 30 seconds)
+- `DELETE /api/v1/history` (requires exact `CLEAR HISTORY` confirmation)
 
-Tare/calibrate commands fail rather than commit when the reading is unstable, saturated, disconnected, or outside the validated range.
+Mutation bodies contain `protocol`, `requestId`, and `deviceId`. Route-body schemas are in
+`docs/schemas/api-v1`; checked fixtures cover every route family. Export/import schema v3 preserves
+device name, complete profile calibration fields, per-profile thresholds, and up to 256 history
+entries. Every history entry has a unique `eventId`; a correction has its own event ID and stores
+the referenced count event in `relatedEventId`. Import validates those references, profile
+ownership, and uniqueness. It rejects secret-bearing fields at any depth and keeps the device's
+current credentials.
 
-## Event stream
+Wi-Fi SSID/password and device secret persist in ESP32 NVS but are absent from status, normal logs,
+JSON export/import backup, and CSV data. NVS persistence is not encryption or a secure element: an
+attacker with physical access and flash-extraction capability may recover credentials. Session
+tokens are short-lived and not persisted.
 
-Events use `{type, sequence, deviceUptimeMs, payload}`. Initial types:
+## Measurements, events, and local button
 
-- `measurement.updated`
-- `measurement.stability_changed`
-- `profile.changed`
-- `threshold.changed`
-- `fault.raised`
-- `fault.cleared`
-- `device.restarting`
+No-count states are `uncalibrated`, `unstable`, `stale`, `disconnected`, `saturated`,
+`overload_indicated`, `below_tare`, `calibration_invalid`, and `uncertainty_excessive`. In each,
+`estimatedCount` and `uncertaintyPieces` are `null`.
 
-Clients detect sequence gaps and refresh status rather than assuming no data was missed.
+WebSocket clients connect to the exact `/api/v1/events` path without credentials in the URL, then
+must immediately send `{"type":"authenticate","token":"..."}`. Authorization is tracked per
+client; setup tokens never authorize streaming, and expired or superseded authenticated sessions
+receive no broadcasts.
 
-## Export formats
+The target broadcasts sequenced `measurement.updated` events at no more than 4 Hz and emits
+`fault.raised` or `status.updated` on state transitions. Other defined event types are
+`measurement.stability_changed`, `profile.changed`, `threshold.changed`, `fault.cleared`, and
+`device.restarting`. A sequence gap makes clients refresh status, profiles, and their history cursor.
+Stable count changes create bounded, persisted count-history events; corrections require both an
+existing profile and the event ID of a count event owned by that same profile.
 
-- Backup: versioned JSON with profiles, calibrations, thresholds, and optional history
-- History: CSV with explicit units and correction markers
-- Credentials, session tokens, and Wi-Fi settings are never exported
+A short release of GPIO3 requests a local tare. Factory reset is recognized only when GPIO3 was
+already held at power-up and remains held for ten seconds; releasing cancels it. Later long presses
+do not erase storage. Reset erases NVS and restarts. These behaviors are host-tested state-machine
+logic, not a claim of measured physical timing.
 
-## Compatibility
-
-- Additive fields may appear within a major protocol version and must be ignored safely by clients.
-- Breaking changes require a new major path/version.
-- Firmware and PWA test suites share checked-in example messages and schema validation.
+The device is USB 5 V SELV-only, not legal-for-trade, and not suitable for safety-critical use.

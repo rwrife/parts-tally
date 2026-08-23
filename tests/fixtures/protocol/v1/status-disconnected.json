@@ -1,0 +1,1 @@
+{"protocol":"parts-tally/v1","deviceId":"pt-001","firmwareVersion":"0.1.0","measurement":{"state":"disconnected","stable":false,"estimatedCount":null,"uncertaintyPieces":null,"sampleAgeMs":80},"faults":["adc_disconnected"]}

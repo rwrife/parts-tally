@@ -2,7 +2,7 @@
 
 **Architecture version:** 1.1
 **Baseline date:** 2026-08-20
-**Status:** Datasheet-backed module chain selected and synthetic capture tools tested; electrical implementation and physical verification pending
+**Status:** Firmware domain, target adapters, protocol routes, native tests, and ESP32-C3 target compile implemented; physical verification pending
 
 This document defines the module-prototype boundary and the later carrier-board boundary. It is not evidence that either assembly exists. The companion machine-readable summary is [`architecture-contract.json`](architecture-contract.json).
 
@@ -186,18 +186,24 @@ Measurement acquisition must not block watchdog/network servicing. Network failu
 | PWA preferences/selected device | Browser | Yes | Optional app settings only |
 
 Every persistent record has a schema version. Migrations are atomic and tested against corruption/interruption. A corrupt calibration never falls back to a plausible-looking count.
+Wi-Fi and device credentials are retained in ESP32 NVS and excluded from logs, status, JSON
+backup/export, and CSV. NVS is not a secure element or encryption boundary; physical flash
+extraction can expose those secrets.
 
 ## 7. Provisioning, API, and app boundary
 
-- First run uses a temporary local setup AP and a physical-presence session initiated by the button.
+- Every boot retains a direct AP; a power-up button hold opens the physical-presence setup session,
+  and stored credentials additionally start a nonblocking STA attempt.
 - No cloud account or Internet connection is required.
 - After provisioning, mutating `/api/v1` operations require a per-device secret/session and idempotency identifier.
 - WebSocket events are sequenced; clients refresh status after a gap.
 - UI components use a typed transport adapter and never call HTTP/WebSocket directly.
 - Core button/status behavior remains available without LAN or Internet.
-- The exact TLS/residual-LAN-risk decision remains open and must be honestly documented by issue #4.
+- Protocol v1 documents plaintext-HTTP residual LAN risk; authenticated TLS is not claimed.
 
-The detailed draft protocol remains in [`protocol.md`](protocol.md) and is not yet an implemented endpoint.
+The finalized contract is in [`protocol.md`](protocol.md). Framework-independent guards, routes,
+and schemas are implemented, and the direct AP/STA plus HTTP/WebSocket adapters compile for the
+target. Their execution on ESP32 hardware remains bench work.
 
 ## 8. Mechanical load path
 
@@ -243,4 +249,4 @@ No later stage may be claimed from an earlier stage's evidence.
 
 Completed: requirements/architecture contracts; manufacturer-document selection of XIAO 113991054, SEN-15242/NAU7802SGI, and SEN-14729/TAL220B; exact planned module wiring; a source/hash manifest; and tested raw-capture/analysis software with synthetic fixtures.
 
-Not completed: KiCad schematic/PCB, final button/LED/carrier connector selection, firmware, app, electrical simulation, fabrication, assembly, continuity checks, bench measurements, or field testing. Datasheet review is not physical validation.
+Not completed: PCB layout, app, electrical simulation, fabrication, assembly, continuity checks, execution of the NAU7802/NVS/network adapters on hardware, bench measurements, or field testing. Firmware native tests and a target compile are software evidence only. Datasheet review is not physical validation.
