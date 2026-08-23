@@ -1,0 +1,1 @@
+{"protocol":"parts-tally/v1","deviceId":"pt-001","firmwareVersion":"0.1.0","measurement":{"state":"stable","stable":true,"netGrams":84.2,"estimatedCount":42,"uncertaintyPieces":1,"sampleAgeMs":80},"faults":[]}

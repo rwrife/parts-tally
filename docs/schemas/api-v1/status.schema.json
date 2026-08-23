@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "parts-tally/api/v1/status",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["protocol", "deviceId", "firmwareVersion", "measurement", "faults"],
+  "properties": {
+    "protocol": {"const": "parts-tally/v1"},
+    "deviceId": {"type": "string", "pattern": "^pt-[A-Za-z0-9-]+$"},
+    "firmwareVersion": {"type": "string"},
+    "measurement": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["state", "stable", "estimatedCount", "uncertaintyPieces", "sampleAgeMs"],
+      "properties": {
+        "state": {"enum": ["stable", "uncalibrated", "unstable", "stale", "disconnected", "saturated", "overload_indicated", "below_tare", "calibration_invalid", "uncertainty_excessive"]},
+        "stable": {"type": "boolean"},
+        "estimatedCount": {"type": ["integer", "null"], "minimum": 0},
+        "uncertaintyPieces": {"type": ["integer", "null"], "minimum": 0},
+        "sampleAgeMs": {"type": "integer", "minimum": 0}
+      },
+      "allOf": [
+        {"if": {"properties": {"state": {"const": "stable"}}, "required": ["state"]}, "then": {"properties": {"stable": {"const": true}, "estimatedCount": {"type": "integer", "minimum": 0}, "uncertaintyPieces": {"type": "integer", "minimum": 0}}}},
+        {"if": {"properties": {"state": {"not": {"const": "stable"}}}, "required": ["state"]}, "then": {"properties": {"stable": {"const": false}, "estimatedCount": {"type": "null"}, "uncertaintyPieces": {"type": "null"}}}}
+      ]
+    },
+    "faults": {"type": "array", "items": {"type": "string"}}
+  }
+}
