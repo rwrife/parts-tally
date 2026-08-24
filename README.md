@@ -98,7 +98,7 @@ The project and schematic now exist. The PCB remains intentionally absent until 
 2. Datasheet-backed module-chain selection and synthetic capture harness — complete; physical fixture/bench characterization explicitly pending
 3. Editable KiCad schematic and schematic-backed BOM — implemented; CI-native ERC and static review evidence are recorded under `hardware/reports/`
 4. Firmware and local protocol with host-side tests
-5. Accessible local PWA and import/export
+5. Accessible local PWA and import/export — implemented and software-tested with a mock transport; physical-device/browser verification remains pending
 6. Carrier PCB, DRC, assembly/bring-up, and fabrication release
 
 Baseline contracts:
@@ -127,14 +127,18 @@ cd firmware
 pio run
 pio test -e native
 
-# Companion PWA (TypeScript/Vite)
+# Companion PWA (TypeScript/Vite, Node 22.23.1 / npm 10.9.8)
 cd app
 npm ci
+npm run lint
+npm run typecheck
 npm test
 npm run build
+npx playwright install chromium # first local run
+npm run test:e2e
 ```
 
-These commands are targets, not current passing evidence; the corresponding projects have not yet been scaffolded.
+See `app/VERIFICATION.md` for the latest exact software verification record. App end-to-end tests use a mock device and do not establish physical integration.
 
 ## Contributing
 

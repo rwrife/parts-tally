@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://parts-tally.local/schemas/api/v1/session-provision.schema.json",
+  "$defs": {
+    "envelope": {"type": "object", "required": ["protocol", "requestId", "deviceId"], "properties": {"protocol": {"const": "parts-tally/v1"}, "requestId": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,128}$"}, "deviceId": {"type": "string", "pattern": "^pt-[A-Za-z0-9-]+$"}}}
+  },
+  "oneOf": [
+    {"allOf": [{"$ref": "#/$defs/envelope"}], "required": ["deviceSecret"], "properties": {"deviceSecret": {"type": "string", "minLength": 16, "maxLength": 128}}, "unevaluatedProperties": false},
+    {"allOf": [{"$ref": "#/$defs/envelope"}], "required": ["wifiSsid", "wifiPassword", "deviceSecret"], "properties": {"wifiSsid": {"type": "string", "maxLength": 32}, "wifiPassword": {"type": "string", "maxLength": 63}, "deviceSecret": {"type": "string", "minLength": 16, "maxLength": 128}}, "unevaluatedProperties": false}
+  ]
+}

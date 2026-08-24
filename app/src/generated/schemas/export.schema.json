@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://parts-tally.local/schemas/api/v1/export.schema.json",
+  "$defs": {
+    "calibration": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schemaVersion", "tareValid", "valid", "provisional", "tareCode", "gramsPerCode", "unitMassGrams", "unitUncertaintyGrams", "calibrationResidualGrams", "knownCount", "createdMs"],
+      "properties": {"schemaVersion": {"const": 2}, "tareValid": {"type": "boolean"}, "valid": {"type": "boolean"}, "provisional": {"type": "boolean"}, "tareCode": {"type": "number"}, "gramsPerCode": {"type": "number"}, "unitMassGrams": {"type": "number", "minimum": 0}, "unitUncertaintyGrams": {"type": "number", "minimum": 0}, "calibrationResidualGrams": {"type": "number", "minimum": 0}, "knownCount": {"type": "integer", "minimum": 0}, "createdMs": {"type": "integer", "minimum": 0}}
+    },
+    "profile": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "name", "lowStockThreshold", "calibrated", "provisional", "calibration"],
+      "properties": {"id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"}, "name": {"type": "string", "minLength": 1, "maxLength": 80}, "lowStockThreshold": {"type": "integer", "minimum": 0}, "calibrated": {"type": "boolean"}, "provisional": {"type": "boolean"}, "calibration": {"$ref": "#/$defs/calibration"}}
+    },
+    "history": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sequence", "deviceUptimeMs", "profileId", "kind", "eventId", "reason", "count"],
+      "properties": {"sequence": {"type": "integer", "minimum": 1}, "deviceUptimeMs": {"type": "integer", "minimum": 0}, "profileId": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"}, "kind": {"enum": ["count", "correction"]}, "eventId": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,128}$"}, "relatedEventId": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,128}$"}, "reason": {"type": "string", "maxLength": 200}, "count": {"type": "integer", "minimum": 0}},
+      "allOf": [
+        {"if": {"properties": {"kind": {"const": "correction"}}}, "then": {"required": ["relatedEventId"]}},
+        {"if": {"properties": {"kind": {"const": "count"}}}, "then": {"not": {"required": ["relatedEventId"]}}}
+      ]
+    }
+  },
+  "type": "object", "additionalProperties": false,
+  "required": ["schemaVersion", "deviceName", "profiles", "history"],
+  "properties": {"schemaVersion": {"const": 3}, "deviceName": {"type": "string", "minLength": 1, "maxLength": 80}, "profiles": {"type": "array", "maxItems": 128, "items": {"$ref": "#/$defs/profile"}}, "history": {"type": "array", "maxItems": 256, "items": {"$ref": "#/$defs/history"}}}
+}

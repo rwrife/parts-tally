@@ -28,7 +28,7 @@ EXPECTED_EVIDENCE_STATUS = {
     "documentation_static": "implemented",
     "datasheet_selection": "implemented",
     "simulation": "not-performed",
-    "software": "firmware-native-tests-and-target-compile",
+    "software": "firmware-and-pwa-software-tests-and-target-compile",
     "schematic_layout": "not-implemented",
     "bench": "not-performed",
     "field": "not-performed",

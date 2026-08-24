@@ -2,7 +2,7 @@
 
 **Architecture version:** 1.1
 **Baseline date:** 2026-08-20
-**Status:** Firmware domain, target adapters, protocol routes, native tests, and ESP32-C3 target compile implemented; physical verification pending
+**Status:** Firmware, protocol, and companion PWA implemented with native, contract, accessibility, and mock-browser tests; ESP32-C3 target compile implemented; physical verification pending
 
 This document defines the module-prototype boundary and the later carrier-board boundary. It is not evidence that either assembly exists. The companion machine-readable summary is [`architecture-contract.json`](architecture-contract.json).
 
@@ -247,6 +247,6 @@ No later stage may be claimed from an earlier stage's evidence.
 
 ## 12. Current evidence
 
-Completed: requirements/architecture contracts; manufacturer-document selection of XIAO 113991054, SEN-15242/NAU7802SGI, and SEN-14729/TAL220B; exact planned module wiring; a source/hash manifest; and tested raw-capture/analysis software with synthetic fixtures.
+Completed: requirements/architecture contracts; manufacturer-document selection of XIAO 113991054, SEN-15242/NAU7802SGI, and SEN-14729/TAL220B; exact planned module wiring; a source/hash manifest; tested raw-capture/analysis software with synthetic fixtures; firmware native tests and ESP32-C3 target compile; and the installable companion PWA with static, unit/component, accessibility, production-build, and mock-browser verification.
 
-Not completed: PCB layout, app, electrical simulation, fabrication, assembly, continuity checks, execution of the NAU7802/NVS/network adapters on hardware, bench measurements, or field testing. Firmware native tests and a target compile are software evidence only. Datasheet review is not physical validation.
+Not completed: PCB layout, electrical simulation, fabrication, assembly, continuity checks, execution of the PWA against physical device networking, execution of the NAU7802/NVS/network adapters on hardware, bench measurements, or field testing. Firmware/app tests and a target compile are software evidence only. Datasheet review is not physical validation.

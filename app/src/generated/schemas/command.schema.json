@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://parts-tally.local/schemas/api/v1/command.schema.json",
+  "$defs": {
+    "envelope": {
+      "type": "object",
+      "required": ["protocol", "requestId", "deviceId"],
+      "properties": {
+        "protocol": {"const": "parts-tally/v1"},
+        "requestId": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,128}$"},
+        "deviceId": {"type": "string", "pattern": "^pt-[A-Za-z0-9-]+$"}
+      }
+    },
+    "identifier": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"},
+    "import": {"$ref": "export.schema.json"},
+    "tare": {
+      "allOf": [{"$ref": "#/$defs/envelope"}],
+      "properties": {"profileId": {"$ref": "#/$defs/identifier"}},
+      "unevaluatedProperties": false
+    },
+    "calibrate": {
+      "allOf": [{"$ref": "#/$defs/envelope"}],
+      "required": ["knownCount"],
+      "properties": {"knownCount": {"type": "integer", "minimum": 10, "maximum": 1000000}, "knownSampleMassGrams": {"type": "number", "exclusiveMinimum": 0}, "profileId": {"$ref": "#/$defs/identifier"}},
+      "unevaluatedProperties": false
+    },
+    "profileCreate": {
+      "allOf": [{"$ref": "#/$defs/envelope"}],
+      "required": ["profileId", "name"],
+      "properties": {"profileId": {"$ref": "#/$defs/identifier"}, "name": {"type": "string", "minLength": 1, "maxLength": 80}, "lowStockThreshold": {"type": "integer", "minimum": 0}},
+      "unevaluatedProperties": false
+    },
+    "profilePatch": {
+      "allOf": [{"$ref": "#/$defs/envelope"}],
+      "properties": {"name": {"type": "string", "minLength": 1, "maxLength": 80}, "lowStockThreshold": {"type": "integer", "minimum": 0}},
+      "anyOf": [{"required": ["name"]}, {"required": ["lowStockThreshold"]}],
+      "unevaluatedProperties": false
+    },
+    "correction": {
+      "allOf": [{"$ref": "#/$defs/envelope"}],
+      "required": ["profileId", "count", "reason"],
+      "properties": {"profileId": {"$ref": "#/$defs/identifier"}, "count": {"type": "integer", "minimum": 0, "maximum": 100000000}, "reason": {"type": "string", "minLength": 1, "maxLength": 200}},
+      "unevaluatedProperties": false
+    },
+    "historyClear": {
+      "allOf": [{"$ref": "#/$defs/envelope"}],
+      "required": ["confirmation"],
+      "properties": {"confirmation": {"const": "CLEAR HISTORY"}},
+      "unevaluatedProperties": false
+    },
+    "importPreview": {
+      "allOf": [{"$ref": "#/$defs/envelope"}],
+      "required": ["import"],
+      "properties": {"import": {"$ref": "#/$defs/import"}},
+      "unevaluatedProperties": false
+    },
+    "importApply": {
+      "allOf": [{"$ref": "#/$defs/envelope"}],
+      "required": ["import", "previewToken"],
+      "properties": {"import": {"$ref": "#/$defs/import"}, "previewToken": {"type": "string", "minLength": 16, "maxLength": 128}},
+      "unevaluatedProperties": false
+    }
+  },
+  "oneOf": [
+    {"$ref": "#/$defs/tare"}, {"$ref": "#/$defs/calibrate"},
+    {"$ref": "#/$defs/profileCreate"}, {"$ref": "#/$defs/profilePatch"},
+    {"$ref": "#/$defs/correction"}, {"$ref": "#/$defs/historyClear"},
+    {"$ref": "#/$defs/importPreview"}, {"$ref": "#/$defs/importApply"}
+  ]
+}
