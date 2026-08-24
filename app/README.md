@@ -1,60 +1,50 @@
-# Companion app
+# Parts Tally companion PWA
 
-## Purpose
+This is the installable, responsive local companion for the Parts Tally device. It implements the HTTP/WebSocket contract in [`../docs/protocol.md`](../docs/protocol.md) and validates device status, events, and backup data at runtime against generated copies of [`../docs/schemas/api-v1`](../docs/schemas/api-v1).
 
-A responsive local-first PWA provides setup, calibration, profile management, live count/status, thresholds, history, and portable export without requiring an app store, cloud backend, or user account.
+## Reproducible development
 
-## Target platforms
+Node 22.23.1 and npm 10.9.8 are pinned in `package.json`; every dependency is an exact version in `package-lock.json`.
 
-- Current iOS Safari/PWA-capable browsers
-- Current Android Chrome/PWA-capable browsers
-- Desktop Chromium/Firefox/Safari as a secondary target
+```bash
+cd app
+npm ci
+npm run generate
+npm run lint
+npm run typecheck
+npm test
+npm run test:a11y
+npm run build
+npx playwright install chromium   # first local run only
+npm run test:e2e
+```
 
-The device-hosted or locally served web app communicates only with the selected Parts Tally device on the local network.
+`npm run generate` refreshes the runtime JSON Schema copies and their aggregate SHA-256 marker. UI components depend on `DeviceTransport`; only `src/protocol/httpTransport.ts` constructs `fetch` or `WebSocket`. Playwright uses the same adapter interface with an in-memory mock device. Those tests are software evidence only and do not claim a physical ESP32, load cell, ADC, radio, or browser/device combination was tested.
 
-## Primary flows
+## Data boundaries and privacy
 
-1. Discover/connect by local address or setup flow
-2. Create/edit a part profile and low-stock threshold
-3. Guided empty-bin tare and known-sample calibration
-4. Live count with explicit stable/unstable, fault, and uncertainty states
-5. Manual correction with reason/history entry
-6. JSON backup/restore and CSV history export
-7. Clear history, reset device, and inspect firmware/hardware version
+- Profiles, calibration, thresholds, history, measurements, and faults returned by a connected device are device-authoritative.
+- The browser caches only the selected address, device ID, and the newest 100 validated profile/history/status records so an offline user can identify the device and inspect a clearly marked snapshot. Cached measurements are never presented as a live count.
+- Device secrets, Wi-Fi passwords, setup tokens, session tokens, and authorization headers are memory-only and are not written to browser storage, JSON, CSV, the service-worker cache, or logs.
+- JSON backup schema v3 contains device name, profiles, calibration, thresholds, and up to 256 device history entries. Import rejects incompatible schema versions and secret-bearing fields, displays the device preview, then requires an explicit apply action within the protocol's 30-second window.
+- CSV export contains history columns only. Both exports require a user action.
+- There are no accounts, analytics, ads, telemetry, cloud API, or background tracking. The app requests no camera, microphone, contacts, location, notification, or BLE permission.
 
-## Data ownership
+## Offline and installation behavior
 
-- No mandatory remote service, analytics, ads, or account
-- Device profiles/calibration are identified as authoritative device data
-- Browser storage contains only selected-device metadata, UI settings, and an explicitly documented cache
-- JSON/CSV exports are user-triggered and exclude Wi-Fi credentials and device secrets
-- Import validates schema/version and previews changes before applying
+The generated service worker precaches the application shell (HTML, JavaScript, CSS, and icon). After one successful HTTPS or localhost load, a supporting browser can reopen and install the shell without Internet access. API responses are deliberately not service-worker cached. A device still must be reachable over its direct AP or trusted LAN for authentication, mutations, and current measurements. Browsers may evict installed-site data; JSON backup remains the portable copy.
 
-## Permissions
+The device protocol is plaintext HTTP/WebSocket. Use a trusted local network: an on-path observer can see bearer traffic. HTTPS-hosted public pages may also block plaintext local-device requests as mixed content, so device-hosted or explicitly trusted local serving is the practical deployment model.
 
-- Local network access is required to communicate with the device
-- BLE permission is requested only if BLE provisioning is selected and initiated
-- File access is requested only through user-driven import/export pickers
-- Notifications are out of MVP; any future low-stock notification is opt-in
-- No location, contacts, camera, microphone, or background tracking permission
+## Platform scope and limitations
 
-## Accessibility expectations
+- Android Chromium: install prompts and standalone display are expected, but local-network permission prompts and background suspension vary by vendor/version.
+- iOS/iPadOS Safari: installation is via Share → Add to Home Screen; service-worker storage can be evicted and WebSockets are normally suspended when backgrounded. There is no background counting or notification promise.
+- Desktop Chromium supports installation; Firefox can use the web app and offline cache but does not consistently offer desktop PWA installation; Safari behavior varies by current macOS release.
+- The automated matrix is mobile and desktop Chromium emulation. It does not prove Safari/iOS, Firefox, Android hardware, local-network routing, captive-portal behavior, or physical device integration.
 
-- WCAG 2.2 AA intent for contrast, labels, focus order, target size, and status communication
-- Stable/unstable and stock state conveyed by text/icon as well as color
-- Complete keyboard operation and screen-reader names
-- Large touch targets suitable for workshop use
-- Reduced-motion preference and no time-critical interaction
-- Calibration instructions use plain language and expose raw/stable values for troubleshooting
+## Accessibility and measurement safety
 
-## Protocol boundary
+The UI is keyboard-operable, uses native landmarks/labels/tables/forms, visible focus, at least 44 px controls, text-and-icon state cues, an aria-live update region, responsive layouts, and reduced-motion handling. Vitest runs axe checks, but automation does not replace manual screen-reader, zoom, contrast, touch, and real-device testing.
 
-The app consumes the versioned contract in `../docs/protocol.md`. UI tests use a mock transport; no component should call `fetch` or WebSocket directly outside the transport adapter.
-
-## Proposed tooling
-
-TypeScript, Vite, a minimal PWA/service-worker plugin, Vitest, Testing Library, Playwright for mock-device end-to-end flows, and automated accessibility checks.
-
-## Current status
-
-No app skeleton or passing build exists yet.
+Every protocol no-count state withholds the numeric count: uncalibrated, unstable, stale, disconnected, saturated, overload indicated, below tare, calibration invalid, and excessive uncertainty. Parts Tally is USB 5 V SELV-only, not legal-for-trade, not certified, and not suitable for safety-critical stock or measurement decisions. Observe load-cell ratings and mechanical overload protection.
