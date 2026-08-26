@@ -90,7 +90,7 @@ The hardware release uses real editable KiCad sources—not image-only drawings�
 - `hardware/kicad/parts-tally.kicad_sch`
 - `hardware/kicad/parts-tally.kicad_pcb`
 
-The project and schematic now exist. The PCB remains intentionally absent until the layout issue is reached; no Gerber, assembly, or fabricated-board claim is implied. The schematic source, custom library, validation notes, and schematic-exported BOM live under `hardware/kicad/`, `hardware/reports/`, and `bom/`.
+The project, schematic, routed two-layer PCB, custom library, validation notes, OpenSCAD platform source, and schematic-exported BOM now exist under `hardware/kicad/`, `hardware/reports/`, `hardware/mechanical/`, and `bom/`. Review renders supplement the editable sources. No Gerber/CPL release, assembled-board, or fabricated-board claim is implied.
 
 ## Current status and milestones
 
@@ -99,7 +99,8 @@ The project and schematic now exist. The PCB remains intentionally absent until 
 3. Editable KiCad schematic and schematic-backed BOM — implemented; CI-native ERC and static review evidence are recorded under `hardware/reports/`
 4. Firmware and local protocol with host-side tests
 5. Accessible local PWA and import/export — implemented and software-tested with a mock transport; physical-device/browser verification remains pending
-6. Carrier PCB, DRC, assembly/bring-up, and fabrication release
+6. Carrier PCB, native DRC, and editable mechanical platform — implemented and statically validated; physical fit/assembly/bring-up remains pending
+7. Fabrication release package, assembly, and bring-up evidence
 
 Baseline contracts:
 

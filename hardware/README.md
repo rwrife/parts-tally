@@ -4,7 +4,7 @@
 
 Parts Tally measures a removable bin through a 4-wire strain-gauge load cell. A 24-bit bridge ADC digitizes the differential signal. An ESP32-C3 filters readings, applies tare and known-count calibration, estimates quantity, stores local profiles, drives a status LED, and serves the local app.
 
-The first hardware increment uses proven modules so measurement and mechanical risks can be characterized before designing a carrier PCB.
+The first hardware increment selected proven modules; revision A0 now includes an editable carrier layout and parametric mechanical platform so measurement and mechanical risks can be characterized before fabrication. This is still static design evidence, not prototype evidence.
 
 ## Controller choice
 
@@ -32,7 +32,7 @@ The exact planned logical wiring map and carrier-board ownership boundary are ve
 
 ## Mechanical and enclosure concept
 
-A rigid base holds one end of a straight-bar load cell; a top plate/bin cradle attaches to the sensing end. Mechanical overload stops protect the cell. The enclosure isolates the PCB and cable from the force path, exposes USB and the button, preserves antenna clearance, and uses common metric fasteners. Printable CAD sources and dimensioned drawings are planned; photos remain placeholders until a real prototype exists.
+A rigid base holds one end of the TAL220B straight-bar load cell; a top plate/bin cradle attaches to the sensing end. Parametric OpenSCAD source in [`mechanical/`](mechanical/) includes M5 load-cell mounts, PCB standoffs outside the force path, cable strain relief, four non-slip feet, and four adjustable overload stops. The carrier places the XIAO antenna at a board edge with enforced two-layer copper/component keepouts; enclosure adaptations must also keep metal and fasteners out of that volume. Fit, print tolerance, stop gap, and load transfer remain physically unverified.
 
 ## Safety limits
 
@@ -54,7 +54,7 @@ The carrier-board milestone preserves:
 - schematic PDF and PCB renders as supplements, never substitutes
 - fabrication Gerbers, drill files, CPL when applicable, and release archive
 
-The project/schematic, project-local symbols/footprints, schematic generator, acceptance validator, datasheet extraction, and schematic-backed BOM are present. The `.kicad_pcb`, DRC, and fabrication outputs are correctly deferred to the PCB/layout milestone.
+The project/schematic, routed `.kicad_pcb`, project-local symbols/footprints, generators, acceptance validators, datasheet extraction, schematic-backed BOM, mechanical source, DRC report, and review renders are present. Gerber/drill/CPL release files remain correctly deferred to the fabrication-packaging milestone.
 
 Final Manufacturer, MPN, supplier, price-observation, stock-observation, datasheet, and BOM-note data lives in KiCad symbol properties. `../bom/preliminary-bom.csv` is not authoritative. From the repository root, regenerate the tracked BOM with `python3 hardware/kicad/export_bom.py`, or follow [`kicad/README.md`](kicad/README.md).
 
@@ -69,6 +69,6 @@ Final Manufacturer, MPN, supplier, price-observation, stock-observation, datashe
 
 ## Current evidence
 
-The editable KiCad project and schematic, project-local symbols/footprints, manufacturer-document/source manifest, schematic-exported BOM, targeted static validator, and schematic analysis now exist. See [`kicad/README.md`](kicad/README.md) and [`reports/schematic-validation.md`](reports/schematic-validation.md).
+The editable KiCad project, schematic, routed carrier PCB, project-local symbols/footprints, manufacturer-document/source manifest, schematic-exported BOM, targeted validators, OpenSCAD mechanical source, and static review evidence now exist. See [`kicad/README.md`](kicad/README.md), [`mechanical/README.md`](mechanical/README.md), [`reports/schematic-validation.md`](reports/schematic-validation.md), and [`reports/layout-validation.md`](reports/layout-validation.md).
 
-No PCB/DRC, firmware/app implementation, electrical simulation, physical fixture/assembly, continuity result, measurement, fabrication, or field evidence exists yet. The design remains explicitly pre-layout and untested in hardware.
+Native KiCad 9 reports zero ERC/DRC violations and zero unconnected PCB items; repository validators pass. These are static checks only. No electrical/EMC simulation, physical fixture/assembly, continuity result, measurement, fabrication, calibration, load test, or field evidence exists yet. The design remains explicitly untested in hardware.

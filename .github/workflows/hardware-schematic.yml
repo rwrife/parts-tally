@@ -1,4 +1,4 @@
-name: Hardware schematic
+name: Hardware design
 
 on:
   pull_request:
@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  validate-schematic:
+  validate-hardware:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -67,12 +67,81 @@ jobs:
               -o /out/parts-tally-schematic.pdf \
               hardware/kicad/parts-tally.kicad_sch
 
-      - name: Upload ERC and schematic render
+          docker run --rm \
+            -v "$PWD:/work:ro" \
+            -v /tmp/parts-tally-kicad:/out \
+            -w /work \
+            kicad/kicad:9.0 \
+            kicad-cli sch export netlist --format kicadxml \
+              -o /out/parts-tally.xml \
+              hardware/kicad/parts-tally.kicad_sch
+
+      - name: Validate PCB structure and schematic parity
+        run: |
+          docker run --rm \
+            -v "$PWD:/work:ro" \
+            -v /tmp/parts-tally-kicad:/out \
+            -w /work \
+            kicad/kicad:9.0 \
+            python3 hardware/kicad/validate_pcb.py \
+              hardware/kicad/parts-tally.kicad_pcb \
+              --netlist /out/parts-tally.xml
+
+      - name: Run native KiCad 9 DRC and render PCB
+        run: |
+          set +e
+          docker run --rm \
+            -v "$PWD:/work:ro" \
+            -v /tmp/parts-tally-kicad:/out \
+            -w /work \
+            kicad/kicad:9.0 \
+            kicad-cli pcb drc --severity-all --all-track-errors \
+              --exit-code-violations \
+              -o /out/parts-tally-drc.rpt \
+              hardware/kicad/parts-tally.kicad_pcb
+          drc_status=$?
+          set -e
+          cat /tmp/parts-tally-kicad/parts-tally-drc.rpt
+          if [ "$drc_status" -ne 0 ]; then
+            exit "$drc_status"
+          fi
+          for side in top bottom; do
+            docker run --rm \
+              -v "$PWD:/work:ro" \
+              -v /tmp/parts-tally-kicad:/out \
+              -w /work \
+              kicad/kicad:9.0 \
+              kicad-cli pcb render --side "$side" --quality high \
+                --width 1600 --height 1000 --background opaque \
+                -o "/out/parts-tally-${side}.png" \
+                hardware/kicad/parts-tally.kicad_pcb
+          done
+
+      - name: Compile editable mechanical parts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends openscad
+          openscad -D 'part="base"' \
+            -o /tmp/parts-tally-kicad/parts-tally-base.stl \
+            hardware/mechanical/parts-tally-platform.scad
+          openscad -D 'part="platform"' \
+            -o /tmp/parts-tally-kicad/parts-tally-platform.stl \
+            hardware/mechanical/parts-tally-platform.scad
+          python hardware/mechanical/validate_stl.py \
+            /tmp/parts-tally-kicad/parts-tally-base.stl \
+            /tmp/parts-tally-kicad/parts-tally-platform.stl
+
+      - name: Upload hardware validation evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: parts-tally-schematic-evidence
+          name: parts-tally-hardware-evidence
           path: |
             /tmp/parts-tally-kicad/parts-tally-erc.rpt
             /tmp/parts-tally-kicad/parts-tally-schematic.pdf
+            /tmp/parts-tally-kicad/parts-tally-drc.rpt
+            /tmp/parts-tally-kicad/parts-tally-top.png
+            /tmp/parts-tally-kicad/parts-tally-bottom.png
+            /tmp/parts-tally-kicad/parts-tally-base.stl
+            /tmp/parts-tally-kicad/parts-tally-platform.stl
           if-no-files-found: warn

@@ -27,3 +27,14 @@ The original draft selected ASMT-YTC2-0AA02, which a current authorized-distribu
 DigiKey and manufacturer pages were discoverable, but no distributor API credentials were available in the scheduled environment and DigiKey blocked automated price/stock retrieval. Those BOM costs are clearly marked as public-listing/search **estimates**, and stock is marked unverified rather than invented. Re-check all such lines before ordering. The Seeed module price is the public direct-store list price observed during this review.
 
 `bom/non-schematic-items.csv` deliberately uses `TBD` wherever an enclosure, harness, supply, or hardware choice has not been sourced. No stock, price, assembly, prototype, or fabrication result is claimed for those items.
+
+## Layout-milestone public-search refresh — 2026-08-26T00:25:19Z
+
+Public search results were refreshed for the four layout-critical assembled parts. Search-index snippets are transient and sometimes disagree, so this was not treated as an API-backed quote and the dated quantity-one observations in KiCad were not overwritten:
+
+- C3020560 / USB4105-GF-A: the exact LCSC result reported “in stock” and “from $0.6043”; another indexed URL reported $0.6584. No exact stock count was exposed.
+- C5180029 / NAU7802SGI: the exact LCSC result reported “in stock” and “from $0.8277”; a category URL reported $0.8792. No exact stock count was exposed.
+- C189895 / SM04B-GHS-TB(LF)(SN): exact and category results both reported “in stock,” but indexed prices conflicted ($1.0754 versus $0.2887). The BOM retains its dated out-of-stock observation and requires checkout-time verification rather than converting an unstable snippet into a sourcing claim.
+- 113991054 / XIAO ESP32-C3: the manufacturer page reported USD $4.99 and “1+ in stock”; LCSC still mapped the MPN to C18212168 without exposing a defensible quantity/price in the result.
+
+The local LCSC resolver was not used because it required accepting bulk-catalog terms on the user's behalf. Current public observations must still be rechecked immediately before ordering.

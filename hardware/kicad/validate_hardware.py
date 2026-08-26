@@ -12,6 +12,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SCHEMATIC = ROOT / "hardware" / "kicad" / "parts-tally.kicad_sch"
+PROJECT = ROOT / "hardware" / "kicad" / "parts-tally.kicad_pro"
 CUSTOM_LIBRARY = ROOT / "hardware" / "kicad" / "lib" / "parts-tally.kicad_sym"
 XIAO_FOOTPRINT = ROOT / "hardware" / "kicad" / "lib" / "parts-tally.pretty" / "XIAO_ESP32C3.kicad_mod"
 EXTRACTION = ROOT / "hardware" / "datasheets" / "extracted" / "NAU7802SGI.json"
@@ -48,7 +49,33 @@ def main() -> int:
     from kicad_sch_api import get_symbol_cache, load_schematic
 
     if not SCHEMATIC.exists():
-        fail(f"missing {SCHEMATIC}")
+        fail(f"missing schematic: {SCHEMATIC}")
+    project = json.loads(PROJECT.read_text(encoding="utf-8"))
+    erc_severities = project.get("erc", {}).get("rule_severities", {})
+    expected_waivers = {
+        "footprint_link_issues": "ignore",
+        "lib_symbol_mismatch": "ignore",
+    }
+    if erc_severities != expected_waivers:
+        fail(
+            "project must retain the two documented headless ERC waivers; "
+            f"found {erc_severities!r}"
+        )
+    board_severities = project.get("board", {}).get("design_settings", {}).get(
+        "rule_severities", {}
+    )
+    expected_board_waivers = {
+        "lib_footprint_issues": "ignore",
+        "lib_footprint_mismatch": "ignore",
+    }
+    actual_board_waivers = {
+        rule: board_severities.get(rule) for rule in expected_board_waivers
+    }
+    if actual_board_waivers != expected_board_waivers:
+        fail(
+            "project must retain the two documented library-only DRC waivers; "
+            f"found {actual_board_waivers!r}"
+        )
     cache = get_symbol_cache()
     symbol_dir = Path(os.environ["KICAD_SYMBOL_DIR"])
     if symbol_dir.is_dir():
