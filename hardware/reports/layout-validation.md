@@ -127,6 +127,7 @@ A 2026-08-26 public-search refresh confirmed current product mappings for J1, J2
 ## False positives / reviewer overrides
 
 - Early parity runs reported H1–H4 as extra footprints. They are intentional mechanical holes and are now marked board-only; final parity reports zero issues.
+- KiCad library-sync checks report board-local overrides on footprints loaded by the deterministic generator, plus the project-local XIAO nickname in the headless container. `lib_footprint_mismatch` and `lib_footprint_issues` are explicitly ignored at project level; this does not suppress copper, clearance, connectivity, keepout, or footprint-placement DRC. `validate_hardware.py` protects the two-waiver set, resolves every populated footprint, checks critical pad sets, and `validate_pcb.py` compares every electrical pad to the exported schematic netlist.
 - The two GND pours initially produced one starved thermal at J3. This was not waived: both planes now use solid pad connections and final DRC is clean.
 - Early post-route GND stitch vias were reported dangling before fills. The generator no longer preplaces them; the final route has five connected GND vias and filled planes.
 - FreeRouting’s internal “violations” count was not accepted as authoritative. The imported result was iterated until native KiCad DRC reported zero violations and zero opens.

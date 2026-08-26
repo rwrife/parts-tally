@@ -61,6 +61,21 @@ def main() -> int:
             "project must retain the two documented headless ERC waivers; "
             f"found {erc_severities!r}"
         )
+    board_severities = project.get("board", {}).get("design_settings", {}).get(
+        "rule_severities", {}
+    )
+    expected_board_waivers = {
+        "lib_footprint_issues": "ignore",
+        "lib_footprint_mismatch": "ignore",
+    }
+    actual_board_waivers = {
+        rule: board_severities.get(rule) for rule in expected_board_waivers
+    }
+    if actual_board_waivers != expected_board_waivers:
+        fail(
+            "project must retain the two documented library-only DRC waivers; "
+            f"found {actual_board_waivers!r}"
+        )
     cache = get_symbol_cache()
     symbol_dir = Path(os.environ["KICAD_SYMBOL_DIR"])
     if symbol_dir.is_dir():
