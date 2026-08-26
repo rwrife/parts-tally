@@ -21,6 +21,9 @@ EXPECTED_HOLES = {
 }
 TEST_POINTS = {f"TP{i}" for i in range(1, 11)}
 ANALOG_NETS = ("/LC_S+", "/LC_S-", "/AIN+", "/AIN-")
+# J2's two SMT hold-down tabs share the non-electrical pad number "MP".
+# They are intentionally absent from the schematic netlist and must remain unnetted.
+BOARD_ONLY_MECHANICAL_PADS = {("J2", "MP")}
 EXPECTED_RULE_AREAS = {
     "XIAO ANTENNA - NO COPPER/TRACKS/VIAS": {
         "bbox": (78.6, 11.0, 5.9, 13.8),
@@ -75,11 +78,12 @@ def main() -> int:
     }
     expected_node_keys = set(nodes_expected)
     missing_pads = sorted(expected_node_keys - pcb_node_keys)
-    extra_pads = sorted(pcb_node_keys - expected_node_keys)
-    if missing_pads or extra_pads:
+    missing_mechanical_pads = sorted(BOARD_ONLY_MECHANICAL_PADS - pcb_node_keys)
+    extra_pads = sorted(pcb_node_keys - expected_node_keys - BOARD_ONLY_MECHANICAL_PADS)
+    if missing_pads or missing_mechanical_pads or extra_pads:
         errors.append(
             f"pin/pad parity mismatch: missing PCB pads={missing_pads} "
-            f"extra PCB pads={extra_pads}"
+            f"missing mechanical pads={missing_mechanical_pads} extra PCB pads={extra_pads}"
         )
 
     checked_pads = 0
@@ -94,6 +98,10 @@ def main() -> int:
             key = (ref, number)
             expected = nodes_expected.get(key)
             if expected is None:
+                if key in BOARD_ONLY_MECHANICAL_PADS:
+                    if pad.GetNetname():
+                        errors.append(f"mechanical pad {ref}.{number} must remain unnetted")
+                    continue
                 if not pad.GetNetname():
                     continue
                 errors.append(f"{ref}.{number} has no schematic node")
@@ -214,7 +222,8 @@ def main() -> int:
     print(f"board: {width:.1f} x {height:.1f} mm, {len(footprints)} footprints ({len(refs_expected)} schematic + 4 holes)")
     print(
         f"netlist parity: {checked_pads} physical PCB pads / {len(pcb_node_keys)} unique pin IDs "
-        f"checked against {len(nodes_expected)} schematic nodes"
+        f"checked against {len(nodes_expected)} schematic nodes plus "
+        f"{len(BOARD_ONLY_MECHANICAL_PADS)} board-only mechanical pad ID"
     )
     print(f"routing: {sum(widths.values())} segments, {vias} vias ({gnd_vias} GND), widths={dict(sorted(widths.items()))}")
     print(f"zones: {len(copper_zones)} GND pours + {len(rule_areas)} antenna rule areas")

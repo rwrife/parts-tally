@@ -40,7 +40,7 @@ During the 2026-08-26 inherited-work review, the base's fixed-end M5 passage was
 |---|---|---|
 | `validate_hardware.py` | raw schematic + manufacturer-backed assertions from issue #3 | PASS: 45 symbols, 31 populated BOM components, 106 labeled connections, 15 intentional NCs, 16 NAU7802 pins, 6 RGB pins, 16 XIAO footprint pads, exact critical pad sets |
 | KiCad 9 ERC | native KiCad | 0 violations |
-| `validate_pcb.py` | raw PCB + exported KiCad XML netlist | PASS: 128 board pads checked against 123 schematic nodes; 41 schematic footprints + 4 board-only holes |
+| `validate_pcb.py` | raw PCB + exported KiCad XML netlist | PASS: 128 physical pads / 124 unique IDs checked against 123 schematic nodes plus J2's explicitly unnetted `MP` hold-down ID; 41 schematic footprints + 4 board-only holes |
 | KiCad 9 DRC | native KiCad, all severities and all track errors | **0 violations, 0 unconnected items, 0 footprint errors** |
 | KiCad 9 schematic parity | native KiCad | **0 parity issues** after H1–H4 were marked board-only |
 | OpenSCAD CLI + `validate_stl.py` | source compile + independent mesh topology | base: 4,672 facets/2,322 vertices; platform: 1,212 facets/608 vertices; each is one edge-connected, consistently wound 2-manifold shell with 0 boundary/overused/orientation/vertex-link errors |
@@ -58,7 +58,7 @@ The critical pin/application review remains grounded in the manufacturer sources
 ## Component and connectivity summary
 
 - 41 schematic footprints + four intentional board-only M3 mounting holes.
-- 128 PCB pads checked against 123 unique schematic netlist nodes; duplicate USB shell/VBUS and switch pads account for the higher physical-pad count.
+- 128 physical PCB pads / 124 unique pad IDs checked against 123 schematic netlist nodes plus J2's explicitly allowlisted, unnetted `MP` hold-down ID; duplicate USB shell/VBUS, switch, and `MP` pads account for the higher physical-pad count.
 - 40 named/generated nets.
 - 332 track segments and 46 vias, including five GND vias.
 - Track width distribution: 13 × 0.15 mm neck-down segments, 296 × 0.20 mm, 14 × 0.25 mm, 9 × 0.50 mm.
