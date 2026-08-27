@@ -29,7 +29,7 @@ EXPECTED_EVIDENCE_STATUS = {
     "datasheet_selection": "implemented",
     "simulation": "not-performed",
     "software": "firmware-and-pwa-software-tests-and-target-compile",
-    "schematic_layout": "not-implemented",
+    "schematic_layout": "editable-schematic-and-pcb-static-validation",
     "bench": "not-performed",
     "field": "not-performed",
 }

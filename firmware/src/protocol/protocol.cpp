@@ -1,4 +1,5 @@
 #include "parts_tally/protocol.hpp"
+#include "parts_tally/version.hpp"
 
 #include <ArduinoJson.h>
 
@@ -495,7 +496,7 @@ TransportResponse ApiService::handle(const TransportRequest& request, std::uint6
       return error(404, "setup_inactive", "physical-presence setup is not active");
     }
     JsonDocument output;
-    output["protocol"] = "parts-tally/v1";
+    output["protocol"] = kProtocolVersion;
     output["token"] = setup_session_.token;
     output["expiresInSeconds"] = (setup_session_.expires_ms - now_ms) / 1000;
     return {200, "application/json", json_string(output)};
@@ -549,14 +550,14 @@ TransportResponse ApiService::dispatch(const TransportRequest& request, std::uin
     if (deserializeJson(input, request.body) || !input.is<JsonObject>()) {
       return error(400, "malformed_request", "body must be one JSON object");
     }
-    if (input["protocol"] != "parts-tally/v1" || !valid_identifier(input["requestId"], 128) ||
+    if (input["protocol"] != kProtocolVersion || !valid_identifier(input["requestId"], 128) ||
         input["deviceId"] != device_id_) {
       return error(422, "schema_invalid", "invalid protocol envelope");
     }
   }
 
   JsonDocument output;
-  output["protocol"] = "parts-tally/v1";
+  output["protocol"] = kProtocolVersion;
   output["deviceId"] = device_id_;
 
   if (request.method == "POST" && request.path == "/api/v1/session") {
@@ -599,7 +600,7 @@ TransportResponse ApiService::dispatch(const TransportRequest& request, std::uin
 
   if (request.method == "GET" && request.path == "/api/v1/status") {
     const Measurement current_measurement = measurement_.evaluate(now_ms);
-    output["firmwareVersion"] = "0.2.0";
+    output["firmwareVersion"] = kFirmwareVersion;
     output["deviceName"] = state_.device_name;
     JsonObject measured = output["measurement"].to<JsonObject>();
     measured["state"] = state_name(current_measurement.state);
@@ -832,7 +833,7 @@ std::string ApiService::event(const std::string& type, const std::string& payloa
   JsonDocument payload;
   if (deserializeJson(payload, payload_json) || !payload.is<JsonObject>()) payload.clear();
   JsonDocument output;
-  output["protocol"] = "parts-tally/v1";
+  output["protocol"] = kProtocolVersion;
   output["type"] = type;
   output["sequence"] = events_.next();
   output["deviceUptimeMs"] = now_ms;

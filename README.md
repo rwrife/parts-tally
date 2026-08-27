@@ -90,7 +90,7 @@ The hardware release uses real editable KiCad sources—not image-only drawings�
 - `hardware/kicad/parts-tally.kicad_sch`
 - `hardware/kicad/parts-tally.kicad_pcb`
 
-The project, schematic, routed two-layer PCB, custom library, validation notes, OpenSCAD platform source, and schematic-exported BOM now exist under `hardware/kicad/`, `hardware/reports/`, `hardware/mechanical/`, and `bom/`. Review renders supplement the editable sources. No Gerber/CPL release, assembled-board, or fabricated-board claim is implied.
+The project, schematic, routed two-layer PCB, custom library, validation notes, OpenSCAD platform source, and schematic-exported BOM now exist under `hardware/kicad/`, `hardware/reports/`, `hardware/mechanical/`, and `bom/`. The tagged release workflow generates and validates Gerber/drill/CPL/PDF/assembly/render artifacts; generated outputs supplement rather than replace editable source. No assembled-board, fabricated-board, or physical-test claim is implied.
 
 ## Current status and milestones
 
@@ -100,7 +100,7 @@ The project, schematic, routed two-layer PCB, custom library, validation notes, 
 4. Firmware and local protocol with host-side tests
 5. Accessible local PWA and import/export — implemented and software-tested with a mock transport; physical-device/browser verification remains pending
 6. Carrier PCB, native DRC, and editable mechanical platform — implemented and statically validated; physical fit/assembly/bring-up remains pending
-7. Fabrication release package, assembly, and bring-up evidence
+7. Tagged fabrication release package and unexecuted assembly/bring-up procedures — release-candidate automation implemented; physical evidence remains pending
 
 Baseline contracts:
 
@@ -111,6 +111,10 @@ Baseline contracts:
 - [Planned module build and capture record](hardware/module-prototype.md)
 - [Datasheet/source manifest](hardware/datasheets/manifest.json)
 - [Unexecuted prototype verification plan](docs/verification-plan.md)
+- [Assembly, calibration, and bring-up procedure](docs/assembly-and-bring-up.md)
+- [Integrated release verification record](docs/release-verification.md)
+- [Release packaging and fabrication assumptions](release/README.md)
+- [Licensing and third-party notices](LICENSES.md)
 - [Risk register](docs/risk-register.md)
 - [Machine-readable architecture contract](docs/architecture-contract.json)
 

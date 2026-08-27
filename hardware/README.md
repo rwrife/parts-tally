@@ -54,9 +54,9 @@ The carrier-board milestone preserves:
 - schematic PDF and PCB renders as supplements, never substitutes
 - fabrication Gerbers, drill files, CPL when applicable, and release archive
 
-The project/schematic, routed `.kicad_pcb`, project-local symbols/footprints, generators, acceptance validators, datasheet extraction, schematic-backed BOM, mechanical source, DRC report, and review renders are present. Gerber/drill/CPL release files remain correctly deferred to the fabrication-packaging milestone.
+The project/schematic, routed `.kicad_pcb`, project-local symbols/footprints, generators, acceptance validators, datasheet extraction, schematic-backed BOM, mechanical source, DRC report, and review renders are present. `scripts/build_release.py` and the tagged release workflow generate and validate Gerber/drill/CPL/PDF/assembly/render outputs without treating those files as physical evidence.
 
-Final Manufacturer, MPN, supplier, price-observation, stock-observation, datasheet, and BOM-note data lives in KiCad symbol properties. `../bom/preliminary-bom.csv` is not authoritative. From the repository root, regenerate the tracked BOM with `python3 hardware/kicad/export_bom.py`, or follow [`kicad/README.md`](kicad/README.md).
+Final Manufacturer, MPN, supplier, price-observation, stock-observation, datasheet, and BOM-note data lives in KiCad symbol properties. `../bom/preliminary-bom.csv` is not authoritative. From the repository root, regenerate the tracked BOM with `python3 hardware/kicad/export_bom.py`, or follow [`kicad/README.md`](kicad/README.md). Assembly order, connector maps, test points, current-limited first power, calibration, recovery, and troubleshooting are in [`../docs/assembly-and-bring-up.md`](../docs/assembly-and-bring-up.md).
 
 ## Key layout constraints for the carrier revision
 
@@ -71,4 +71,4 @@ Final Manufacturer, MPN, supplier, price-observation, stock-observation, datashe
 
 The editable KiCad project, schematic, routed carrier PCB, project-local symbols/footprints, manufacturer-document/source manifest, schematic-exported BOM, targeted validators, OpenSCAD mechanical source, and static review evidence now exist. See [`kicad/README.md`](kicad/README.md), [`mechanical/README.md`](mechanical/README.md), [`reports/schematic-validation.md`](reports/schematic-validation.md), and [`reports/layout-validation.md`](reports/layout-validation.md).
 
-Native KiCad 9 reports zero ERC/DRC violations and zero unconnected PCB items; repository validators pass. These are static checks only. No electrical/EMC simulation, physical fixture/assembly, continuity result, measurement, fabrication, calibration, load test, or field evidence exists yet. The design remains explicitly untested in hardware.
+Native KiCad 9 reports zero ERC/DRC violations and zero unconnected PCB items; repository validators pass. The issue #7 release workflow regenerates Gerber/drill/CPL/PDF/assembly/render outputs from the tagged sources and verifies archive checksums. These are static checks only. No electrical/EMC simulation, physical fixture/assembly, continuity result, measurement, fabrication, calibration, load test, or field evidence exists yet. The design remains explicitly untested in hardware.

@@ -1,0 +1,182 @@
+name: Release candidate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+env:
+  KICAD_IMAGE: kicad/kicad@sha256:e638b79b0321f29395a5b783e94bb9f3c73303e8da15da27b8f5cb4b67a37729
+  OPENSCAD_IMAGE: openscad/openscad@sha256:147e48525bec392bcf628d7a6d5ea4ccac71b16251952328f86e1061cbf47c37
+  PLAYWRIGHT_IMAGE: mcr.microsoft.com/playwright@sha256:dcc5531e97840b9b5e794f2814476b21571c5124a3fca2267d73041f56e7580e
+
+jobs:
+  verify-firmware:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: release/requirements.lock
+      - run: python3 -m pip install --require-hashes -r release/requirements.lock
+      - run: python3 scripts/validate_contract.py
+      - run: python3 scripts/validate_firmware_format.py
+      - run: python3 -m unittest discover -s tests -v
+      - run: pio check -d firmware -e native --fail-on-defect high
+      - run: pio test -d firmware -e native
+      - run: pio run -d firmware -e seeed_xiao_esp32c3
+
+  verify-app:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22.23.1
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - run: npm ci
+      - run: npm run generate
+      - run: git diff --exit-code -- src/generated
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - name: Run browser tests in pinned Playwright image
+        run: |
+          docker run --rm \
+            --user "$(id -u):$(id -g)" \
+            -e HOME=/tmp \
+            -v "$PWD:/work" \
+            -w /work \
+            "$PLAYWRIGHT_IMAGE" \
+            npx playwright test
+
+  package:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: release/requirements.lock
+
+      - name: Install hash-locked validation dependencies
+        run: python3 -m pip install --require-hashes -r release/requirements.lock
+
+      - name: Provide pinned KiCad 9 libraries to static checks
+        run: |
+          docker pull "$KICAD_IMAGE"
+          docker create --name parts-tally-kicad-assets "$KICAD_IMAGE"
+          docker cp parts-tally-kicad-assets:/usr/share/kicad/symbols /tmp/kicad-symbols
+          docker cp parts-tally-kicad-assets:/usr/share/kicad/footprints /tmp/kicad-footprints
+          docker rm parts-tally-kicad-assets
+          echo "KICAD_SYMBOL_DIR=/tmp/kicad-symbols" >> "$GITHUB_ENV"
+          echo "KICAD_FOOTPRINT_DIR=/tmp/kicad-footprints" >> "$GITHUB_ENV"
+
+      - name: Validate schematic, BOM, manifest, and documentation contracts
+        run: |
+          python3 hardware/kicad/validate_hardware.py
+          python3 hardware/kicad/export_bom.py --check
+          python3 scripts/validate_contract.py
+          python3 scripts/validate_release.py
+          python3 -m unittest discover -s tests -v
+
+      - name: Compile and validate exact mechanical release artifacts
+        run: |
+          mkdir -p "$RUNNER_TEMP/parts-tally-mechanical"
+          docker run --rm \
+            --user "$(id -u):$(id -g)" \
+            -e HOME=/tmp \
+            -v "$PWD:/work:ro" \
+            -v "$RUNNER_TEMP/parts-tally-mechanical:/mechanical" \
+            -w /work \
+            "$OPENSCAD_IMAGE" \
+            openscad -D 'part="base"' -o /mechanical/parts-tally-base.stl hardware/mechanical/parts-tally-platform.scad
+          docker run --rm \
+            --user "$(id -u):$(id -g)" \
+            -e HOME=/tmp \
+            -v "$PWD:/work:ro" \
+            -v "$RUNNER_TEMP/parts-tally-mechanical:/mechanical" \
+            -w /work \
+            "$OPENSCAD_IMAGE" \
+            openscad -D 'part="platform"' -o /mechanical/parts-tally-platform.stl hardware/mechanical/parts-tally-platform.scad
+          python3 hardware/mechanical/validate_stl.py \
+            "$RUNNER_TEMP/parts-tally-mechanical/parts-tally-base.stl" \
+            "$RUNNER_TEMP/parts-tally-mechanical/parts-tally-platform.stl"
+
+      - name: Build tagged fabrication/release archive with pinned KiCad 9
+        run: |
+          VERSION=$(python3 -c 'import json; print(json.load(open("release/manifest.json"))["release"])')
+          SOURCE_EPOCH=$(git show -s --format=%ct HEAD)
+          mkdir -p "$RUNNER_TEMP/parts-tally-release"
+          docker run --rm \
+            --user "$(id -u):$(id -g)" \
+            -e HOME=/tmp \
+            -e SOURCE_DATE_EPOCH="$SOURCE_EPOCH" \
+            -v "$PWD:/work:ro" \
+            -v "$RUNNER_TEMP/parts-tally-release:/out" \
+            -v "$RUNNER_TEMP/parts-tally-mechanical:/mechanical:ro" \
+            -w /work \
+            "$KICAD_IMAGE" \
+            python3 scripts/build_release.py \
+              --version "$VERSION" \
+              --source-ref "${GITHUB_REF_NAME}" \
+              --source-revision "${GITHUB_SHA}" \
+              --base-stl /mechanical/parts-tally-base.stl \
+              --platform-stl /mechanical/parts-tally-platform.stl \
+              --output /out
+          mkdir -p dist
+          cp -a "$RUNNER_TEMP/parts-tally-release/." dist/
+
+      - name: Validate archive contents, BOM/CPL parity, and checksums
+        run: |
+          VERSION=$(python3 -c 'import json; print(json.load(open("release/manifest.json"))["release"])')
+          python3 scripts/validate_release.py --bundle "dist/parts-tally-${VERSION}.zip"
+          (cd dist && sha256sum -c "parts-tally-${VERSION}.zip.sha256")
+          unzip -t "dist/parts-tally-${VERSION}.zip"
+
+      - name: Upload validated release archive
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: parts-tally-release-candidate
+          path: dist/
+          if-no-files-found: error
+
+  publish:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [verify-firmware, verify-app, package]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: parts-tally-release-candidate
+          path: dist
+      - name: Publish verified tag as prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=$(python3 -c 'import json; print(json.load(open("release/manifest.json"))["release"])')
+          test "$GITHUB_REF_NAME" = "$VERSION"
+          gh release create "$GITHUB_REF_NAME" \
+            "dist/parts-tally-${VERSION}.zip" \
+            "dist/parts-tally-${VERSION}.zip.sha256" \
+            --verify-tag --prerelease \
+            --title "Parts Tally ${VERSION}" \
+            --notes-file release/RELEASE_NOTES.md
