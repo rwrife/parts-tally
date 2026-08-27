@@ -177,8 +177,8 @@ def copy_sources(stage: Path, base_stl: Path, platform_stl: Path) -> None:
     source_root = stage / "sources"
     documentation = stage / "documentation"
     licenses = stage / "licenses"
-    documentation.mkdir(parents=True)
-    licenses.mkdir(parents=True)
+    documentation.mkdir(parents=True, exist_ok=True)
+    licenses.mkdir(parents=True, exist_ok=True)
 
     source_ignores = shutil.ignore_patterns(
         "__pycache__", "*.pyc", ".pio", "node_modules", "dist",

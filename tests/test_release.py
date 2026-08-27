@@ -112,6 +112,7 @@ class ReleaseContractTests(unittest.TestCase):
         platform = ROOT / "hardware/mechanical/generated/parts-tally-platform.stl"
         with tempfile.TemporaryDirectory() as temporary:
             stage = Path(temporary) / "stage"
+            (stage / "documentation").mkdir(parents=True)
             BUILD.copy_sources(stage, base, platform)
             required = (
                 "sources/app/scripts/generate-contract.mjs",
