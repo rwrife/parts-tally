@@ -123,6 +123,7 @@ jobs:
           VERSION=$(python3 -c 'import json; print(json.load(open("release/manifest.json"))["release"])')
           SOURCE_EPOCH=$(git show -s --format=%ct HEAD)
           mkdir -p "$RUNNER_TEMP/parts-tally-release"
+          sudo chown 1000:1000 "$RUNNER_TEMP/parts-tally-release"
           docker run --rm \
             -e SOURCE_DATE_EPOCH="$SOURCE_EPOCH" \
             -v "$PWD:/work:ro" \
