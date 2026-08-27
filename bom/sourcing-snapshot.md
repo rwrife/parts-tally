@@ -38,3 +38,13 @@ Public search results were refreshed for the four layout-critical assembled part
 - 113991054 / XIAO ESP32-C3: the manufacturer page reported USD $4.99 and “1+ in stock”; LCSC still mapped the MPN to C18212168 without exposing a defensible quantity/price in the result.
 
 The local LCSC resolver was not used because it required accepting bulk-catalog terms on the user's behalf. Current public observations must still be rechecked immediately before ordering.
+
+## Release-candidate public-search refresh — 2026-08-27 UTC
+
+The release run again declined the bulk catalog because accepting third-party catalog terms was not authorized. Public search results were used only to recheck exact mappings:
+
+- **C189895 / JST SM04B-GHS-TB(LF)(SN):** the exact LCSC result said “Out of Stock,” while another indexed LCSC URL called the same MPN “In-stock”; the JLCPCB result confirmed the exact extended-part mapping but exposed no reliable quantity. This remains an unresolved checkout-time blocker for turnkey PCBA, not a basis for substitution.
+- **C5180029 / Nuvoton NAU7802SGI:** the exact mapping resolved, but snippets mixed current and alternate C2614351 pages and conflicting prices/quantities. No BOM stock/price was updated.
+- **C3020560 / GCT USB4105-GF-A:** the exact mapping resolved and public snippets reported stock, but counts/prices varied. No API-grade quote was available and no BOM stock/price was updated.
+
+No stock, price, lifecycle, purchase, or fabrication claim is inferred from this refresh. Recheck every line through the chosen supplier immediately before ordering and review all blank JLCPCB BOM identifiers as user-sourced parts.

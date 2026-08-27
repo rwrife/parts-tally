@@ -2,6 +2,7 @@ __pycache__/
 *.py[cod]
 .worktrees/
 .venv/
+dist/
 
 # Downloaded manufacturer PDFs/text are reproducible from the manifest.
 hardware/datasheets/pdfs/

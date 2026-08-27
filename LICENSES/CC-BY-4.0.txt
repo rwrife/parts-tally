@@ -1,0 +1,11 @@
+Creative Commons Attribution 4.0 International (CC-BY-4.0)
+
+The original documentation identified in LICENSES.md is licensed under the Creative Commons Attribution 4.0 International Public License.
+
+Canonical license text: https://creativecommons.org/licenses/by/4.0/legalcode
+SPDX license page: https://spdx.org/licenses/CC-BY-4.0.html
+
+Copyright (c) 2026 rwrife and Parts Tally contributors.
+
+Attribution: Parts Tally contributors, https://github.com/rwrife/parts-tally
+No endorsement by Creative Commons or any component manufacturer is implied.

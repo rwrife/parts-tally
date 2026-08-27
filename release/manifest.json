@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "release": "v0.1.0-rc.1",
+  "status": "release-candidate",
+  "compatibility": {
+    "carrier_board": "A0",
+    "firmware": "0.2.0",
+    "protocol": "parts-tally/v1",
+    "app": "0.1.0",
+    "persistent_state_schema": 3,
+    "calibration_schema": 2
+  },
+  "source": {
+    "expected_tag": "v0.1.0-rc.1",
+    "repository": "https://github.com/rwrife/parts-tally",
+    "editable_hardware": [
+      "hardware/kicad/parts-tally.kicad_pro",
+      "hardware/kicad/parts-tally.kicad_sch",
+      "hardware/kicad/parts-tally.kicad_pcb",
+      "hardware/mechanical/parts-tally-platform.scad"
+    ]
+  },
+  "fabrication_profile": {
+    "manufacturer_profile": "JLCPCB standard two-layer prototype capability",
+    "layers": 2,
+    "board_width_mm": 100.0,
+    "board_height_mm": 60.0,
+    "board_thickness_mm": 1.6,
+    "minimum_track_mm": 0.15,
+    "minimum_clearance_mm": 0.2,
+    "minimum_via_diameter_mm": 0.6,
+    "minimum_via_drill_mm": 0.3,
+    "minimum_copper_edge_mm": 0.5,
+    "surface_finish": "operator selection required",
+    "copper_weight": "operator selection required; validate default 1 oz if used"
+  },
+  "evidence": {
+    "static_analysis": "required-pass",
+    "simulation": "not-performed-no-spice-simulator-and-no-validated-physical-parasitics",
+    "software_tests": "required-pass",
+    "target_compile": "required-pass",
+    "bench": "not-performed-no-physical-prototype",
+    "field": "not-performed-no-physical-prototype"
+  },
+  "safety_scope": {
+    "power": "USB 5 V SELV only",
+    "legal_for_trade": false,
+    "safety_certified": false,
+    "prohibited_uses": [
+      "mains",
+      "medical",
+      "life-safety",
+      "hazardous-process",
+      "weapon"
+    ]
+  },
+  "known_limitations": [
+    "No carrier PCB or mechanical fixture has been fabricated or assembled.",
+    "No continuity, current, rail, ADC, calibration, load, RF, EMC, thermal, bench, or field measurement exists.",
+    "J1 uses two bottom-tented unfilled through-vias in VBUS pads; assembly-process approval or documented hand rework is required.",
+    "The PCBA BOM contains blank LCSC identifiers for user-sourced parts and is not a one-click turnkey order.",
+    "J2 C189895 public search results conflict on stock; verify the exact JST MPN immediately before ordering.",
+    "The device is not legal-for-trade and must preserve explicit uncertainty and fault states."
+  ]
+}
