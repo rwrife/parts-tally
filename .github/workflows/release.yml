@@ -124,8 +124,6 @@ jobs:
           SOURCE_EPOCH=$(git show -s --format=%ct HEAD)
           mkdir -p "$RUNNER_TEMP/parts-tally-release"
           docker run --rm \
-            --user "$(id -u):$(id -g)" \
-            -e HOME=/tmp \
             -e SOURCE_DATE_EPOCH="$SOURCE_EPOCH" \
             -v "$PWD:/work:ro" \
             -v "$RUNNER_TEMP/parts-tally-release:/out" \
